@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Salesforce — Practical Study Guide</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#0176D3;--dark:#032D60;--mid:#0E4FA5;
+  --green:#2E844A;--green-bg:#E8F7EA;
+  --orange:#C25E00;--orange-bg:#FFF3E0;
+  --red:#BA0517;--red-bg:#FEEEF0;
+  --purple:#5867E8;--purple-bg:#F0EFFF;
+  --teal:#0D7DB5;--teal-bg:#E5F5FC;
+  --yellow-bg:#FFFAEA;--yellow-border:#F4C430;--yellow-text:#4A3B00;
+  --bg:#F3F2F2;--white:#fff;
+  --text:#181818;--text2:#444;--text3:#706E6B;
+  --border:#DDDBDA;--shadow:0 2px 6px rgba(0,0,0,.1);
+  --r:6px;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+.topbar{height:56px;background:var(--dark);display:flex;align-items:center;padding:0 24px;gap:16px;position:fixed;top:0;left:0;right:0;z-index:1000}
+.logo{color:#fff;font-size:16px;font-weight:700;white-space:nowrap}
+.logo span{color:#00A1E0}
+.badge-course{background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.3);border-radius:12px;padding:3px 12px;font-size:12px}
+.progress-bar{flex:1;max-width:300px;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;margin-left:auto}
+.progress-fill{height:100%;background:#00A1E0;border-radius:3px;transition:width .3s;width:0%}
+.prog-label{color:rgba(255,255,255,.7);font-size:12px;min-width:60px;text-align:right}
+.layout{display:flex;margin-top:56px;min-height:calc(100vh - 56px)}
+.sidebar{width:270px;flex-shrink:0;background:#fff;border-right:1px solid var(--border);position:fixed;top:56px;bottom:0;overflow-y:auto}
+.sb-head{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:14px 16px 4px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;color:var(--text2);font-size:13px;border-left:3px solid transparent;transition:.12s;text-decoration:none;line-height:1.3}
+.sb-item:hover{background:#F3F9FF;color:var(--text)}
+.sb-item.active{background:#EAF4FF;color:var(--blue);border-left-color:var(--blue);font-weight:600}
+.sb-num{width:20px;height:20px;border-radius:50%;background:var(--border);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--text2);flex-shrink:0}
+.sb-item.active .sb-num{background:var(--blue);color:#fff}
+.sb-divider{border:none;border-top:1px solid var(--border);margin:6px 0}
+.content{margin-left:270px;flex:1;padding:28px 32px;max-width:900px}
+.module{display:none}.module.active{display:block}
+.mod-hd{margin-bottom:24px}
+.mod-tag{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 10px;border-radius:12px;margin-bottom:8px}
+.mod-title{font-size:24px;font-weight:700;color:var(--dark);line-height:1.2;margin-bottom:6px}
+.mod-sub{color:var(--text3);font-size:14px;margin-bottom:0}
+.sec{background:#fff;border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+.sec-hd{padding:14px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.sec-hd:hover{background:#FAFAF9}
+.sec-icon{font-size:18px;flex-shrink:0}
+.sec-title{font-size:15px;font-weight:600;color:var(--text);flex:1}
+.sec-toggle{color:var(--text3);font-size:18px;transition:.2s}
+.sec-toggle.open{transform:rotate(180deg)}
+.sec-body{padding:18px;border-top:1px solid var(--border);display:none}
+.sec-body.open{display:block}
+.theory-box{background:var(--teal-bg);border-left:4px solid var(--teal);border-radius:0 var(--r) var(--r) 0;padding:12px 14px;margin-bottom:14px}
+.theory-box h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:8px}
+.theory-box ul{padding-left:18px}
+.theory-box li{font-size:13px;color:var(--text);margin-bottom:4px;line-height:1.5}
+.theory-box li strong{color:var(--dark)}
+.exercise{background:var(--yellow-bg);border:1px solid var(--yellow-border);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.exercise h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--yellow-text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.ex-steps{counter-reset:step;padding-left:0;list-style:none}
+.ex-steps li{counter-increment:step;padding:8px 0 8px 36px;border-bottom:1px solid rgba(244,196,48,.3);font-size:13px;color:var(--text);position:relative;line-height:1.5}
+.ex-steps li:last-child{border-bottom:none}
+.ex-steps li::before{content:counter(step);position:absolute;left:0;top:8px;width:24px;height:24px;border-radius:50%;background:var(--yellow-border);color:var(--yellow-text);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.ex-steps li strong{color:var(--dark)}
+.ex-steps li code{background:rgba(0,0,0,.08);padding:1px 5px;border-radius:3px;font-size:12px;font-family:monospace}
+.ex-steps li em{color:var(--text3);font-style:normal;font-size:12px}
+.checklist{background:var(--green-bg);border-left:4px solid var(--green);border-radius:0 var(--r) var(--r) 0;padding:12px 14px;margin-bottom:12px}
+.checklist h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green);margin-bottom:8px}
+.check-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:13px;color:var(--text);cursor:pointer;border-bottom:1px solid rgba(46,132,74,.15)}
+.check-item:last-child{border-bottom:none}
+.check-item input[type=checkbox]{width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:var(--green);cursor:pointer}
+.check-item label{cursor:pointer;line-height:1.4}
+.check-item.checked label{text-decoration:line-through;color:var(--text3)}
+.alert{border-radius:var(--r);padding:12px 14px;margin-bottom:12px;font-size:13px;line-height:1.5;display:flex;gap:8px;align-items:flex-start}
+.alert-warn{background:var(--orange-bg);border-left:4px solid var(--orange)}
+.alert-warn .alert-icon{color:var(--orange);font-size:16px;flex-shrink:0}
+.alert-info{background:#EAF4FF;border-left:4px solid var(--blue)}
+.alert-info .alert-icon{color:var(--blue);font-size:16px;flex-shrink:0}
+.alert-err{background:var(--red-bg);border-left:4px solid var(--red)}
+.alert-err .alert-icon{color:var(--red);font-size:16px;flex-shrink:0}
+.alert strong{color:var(--dark)}
+.dtable{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px}
+.dtable th{background:#F3F2F2;padding:8px 10px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid var(--border)}
+.dtable td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.dtable td:first-child{font-weight:500;color:var(--text)}
+.dtable .y{color:var(--green);font-weight:700;text-align:center}
+.dtable .n{color:var(--red);font-weight:700;text-align:center}
+.tag{display:inline-block;background:#F3F2F2;border:1px solid var(--border);border-radius:10px;padding:2px 8px;font-size:11px;color:var(--text2);margin:2px}
+.tag-blue{background:#EAF4FF;border-color:rgba(1,118,211,.3);color:var(--blue)}
+.tag-green{background:var(--green-bg);border-color:rgba(46,132,74,.3);color:var(--green)}
+.tag-orange{background:var(--orange-bg);border-color:rgba(194,94,0,.3);color:var(--orange)}
+.tag-red{background:var(--red-bg);border-color:rgba(186,5,23,.3);color:var(--red)}
+.tag-purple{background:var(--purple-bg);border-color:rgba(88,103,232,.3);color:var(--purple)}
+.nav-btns{display:flex;justify-content:space-between;margin-top:28px;padding-top:20px;border-top:1px solid var(--border)}
+.btn{padding:9px 18px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:.15s}
+.btn-p{background:var(--blue);color:#fff}
+.btn-p:hover{background:var(--mid)}
+.btn-s{background:#fff;color:var(--blue);border:1px solid var(--blue)}
+.btn-s:hover{background:#EAF4FF}
+.btn-g{background:#fff;color:var(--text2);border:1px solid var(--border)}
+.btn-g:hover{background:#F3F2F2}
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding:12px;background:#FAFAF9;border-radius:var(--r);border:1px solid var(--border)}
+.flow-step{background:var(--blue);color:#fff;padding:7px 12px;border-radius:var(--r);font-size:12px;font-weight:600;white-space:nowrap}
+.flow-step.green{background:var(--green)}
+.flow-step.orange{background:var(--orange)}
+.flow-step.red{background:var(--red)}
+.flow-step.gray{background:var(--text3)}
+.flow-arr{color:var(--text3);font-size:16px}
+.callout{background:var(--purple-bg);border-left:4px solid var(--purple);border-radius:0 var(--r) var(--r) 0;padding:12px 14px;font-size:13px;color:var(--text);margin-bottom:12px;line-height:1.5}
+.callout strong{color:var(--purple)}
+.hl{background:#EAF4FF;border-left:3px solid var(--blue);padding:9px 12px;border-radius:0 var(--r) var(--r) 0;font-size:13px;margin-bottom:10px;line-height:1.5}
+.hl strong{color:var(--dark)}
+.mod-counter{font-size:12px;color:var(--text3);text-align:center;margin-top:8px}
+@media(max-width:900px){.sidebar{width:220px}.content{margin-left:220px;padding:20px}}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="logo">&#9889; <span>Sales</span>force</div>
+  <div class="badge-course">WomenForce IT — Cycle 11 · Study Guide</div>
+  <div class="progress-bar"><div class="progress-fill" id="pbar"></div></div>
+  <div class="prog-label" id="prog-label">0 / 13</div>
+</nav>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-head">Sales</div>
+  <a class="sb-item active" onclick="show(0)" href="#"><span class="sb-num">1</span>Leads &amp; Prospecting</a>
+  <a class="sb-item" onclick="show(1)" href="#"><span class="sb-num">2</span>Lead Automation</a>
+  <a class="sb-item" onclick="show(2)" href="#"><span class="sb-num">3</span>Accounts &amp; Contacts</a>
+  <a class="sb-item" onclick="show(3)" href="#"><span class="sb-num">4</span>Opportunities</a>
+  <a class="sb-item" onclick="show(4)" href="#"><span class="sb-num">5</span>Products &amp; Pricing</a>
+  <a class="sb-item" onclick="show(5)" href="#"><span class="sb-num">6</span>Campaigns</a>
+  <hr class="sb-divider">
+  <div class="sb-head">Service</div>
+  <a class="sb-item" onclick="show(6)" href="#"><span class="sb-num">7</span>Cases &amp; Service Cloud</a>
+  <a class="sb-item" onclick="show(7)" href="#"><span class="sb-num">8</span>Case Automation</a>
+  <hr class="sb-divider">
+  <div class="sb-head">Platform</div>
+  <a class="sb-item" onclick="show(8)" href="#"><span class="sb-num">9</span>Object Manager</a>
+  <a class="sb-item" onclick="show(9)" href="#"><span class="sb-num">10</span>Fields &amp; Relationships</a>
+  <a class="sb-item" onclick="show(10)" href="#"><span class="sb-num">11</span>Layouts, Record Types &amp; Paths</a>
+  <hr class="sb-divider">
+  <div class="sb-head">Setup &amp; Data</div>
+  <a class="sb-item" onclick="show(11)" href="#"><span class="sb-num">12</span>Users, Profiles &amp; Roles</a>
+  <a class="sb-item" onclick="show(12)" href="#"><span class="sb-num">13</span>Data Management</a>
+</aside>
+
+<main class="content">
+
+<!-- ══ 1. LEADS ══ -->
+<div id="mod-0" class="module active">
+  <div class="mod-hd">
+    <div class="mod-tag tag-blue">Module 1</div>
+    <div class="mod-title">&#128100; Leads — Prospective Customers</div>
+    <div class="mod-sub">Classes 1 &amp; 2 · Sales Process · Lead Conversion</div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#128218;</span><span class="sec-title">Key theory from the course</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="theory-box">
+        <h4>What is a Lead?</h4>
+        <ul>
+          <li>A <strong>Lead is a prospective customer</strong>. It can be created manually, via Web-to-Lead, LinkedIn Lead Gen, or other sources.</li>
+          <li>It follows a <strong>Lead Process</strong> with stages defined in the <strong>Status</strong> picklist field.</li>
+          <li>Once qualified, it is <strong>converted</strong> into an Account + Contact + (optional) Opportunity.</li>
+          <li>Standard fields are mapped automatically on conversion. <strong>Custom fields require manual mapping</strong> in Setup → Lead Fields → Map Lead Fields.</li>
+          <li>You can <strong>merge up to 3 duplicate leads</strong>. Only the lead owner, their manager, or the system admin can do this.</li>
+        </ul>
+      </div>
+      <div class="flow">
+        <div class="flow-step gray">New</div><div class="flow-arr">→</div>
+        <div class="flow-step">In Contact</div><div class="flow-arr">→</div>
+        <div class="flow-step">Working</div><div class="flow-arr">→</div>
+        <div class="flow-step">Nurturing</div><div class="flow-arr">→</div>
+        <div class="flow-step green">Converted</div><div class="flow-arr">/</div>
+        <div class="flow-step red">Unqualified</div>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#127919;</span><span class="sec-title">Hands-on exercises</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="exercise">
+        <h4>&#9997; Exercise 1 — Create a Lead manually</h4>
+        <ol class="ex-steps">
+          <li>Go to the <strong>Leads</strong> tab → click <strong>New</strong>.</li>
+          <li>Fill in: Last Name, Email, First Name. Add a custom field <code>ClientType__c</code> = Individual and <code>InterestType__c</code> = Vacation Packages.</li>
+          <li>Save the record. Notice that <strong>Status</strong> defaults to "New".</li>
+          <li>Find the <strong>Lead Path</strong> at the top of the record. Advance the stage to "In Contact".</li>
+          <li><em>Reflection: What guidance text appears in the "In Contact" step? Which key fields does the Path highlight?</em></li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 2 — Detect and merge duplicates</h4>
+        <ol class="ex-steps">
+          <li>Create a second lead with the <strong>same email address</strong> as the first one.</li>
+          <li>Open the first lead → click the <strong>"Find Duplicates"</strong> button.</li>
+          <li>Salesforce displays the <strong>Potential Duplicates</strong> component. Click "Merge".</li>
+          <li>Choose which field values to keep from the master record and the duplicates. Confirm the merge.</li>
+          <li><em>Remember: only the lead owner, their manager, or the system admin can merge leads.</em></li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 3 — Convert a qualified Lead</h4>
+        <ol class="ex-steps">
+          <li>Open an advanced-stage lead → click <strong>"Convert"</strong>.</li>
+          <li>On the conversion screen, review the three sections: <strong>Account, Contact, Opportunity</strong>.</li>
+          <li>Choose "Create new account" and enter the name. If a matching account already exists, Salesforce will suggest it.</li>
+          <li>Check the <strong>optional Opportunity</strong> checkbox and give it a name.</li>
+          <li>Verify that the mapped fields (name, email, phone) transferred correctly to the Contact.</li>
+          <li><em>Did the custom field <code>InterestType__c</code> transfer? If not, where do you configure that mapping?</em></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#9989;</span><span class="sec-title">Comprehension checklist</span><span class="sec-toggle">&#8964;</span></div>
+    <div class="sec-body">
+      <div class="checklist">
+        <h4>Check the concepts you already understand</h4>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can explain what a Lead is and how it differs from a Contact.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know when and how to convert a lead (which objects are created).</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand that custom fields need manual field mapping for lead conversion.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know who can merge duplicate leads.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can configure and navigate the Lead Path on a record.</label></div>
+      </div>
+      <div class="alert alert-warn"><span class="alert-icon">⚠</span><div><strong>Common mistake:</strong> confusing Lead Status (the process stage) with a Lead Score. Status is a picklist field that defines the lead's lifecycle. It drives the Lead Path and Assignment Rules.</div></div>
+    </div>
+  </div>
+  <div class="nav-btns"><div></div><button class="btn btn-p" onclick="show(1)">Next: Lead Automation ›</button></div>
+  <div class="mod-counter">Topic 1 of 13</div>
+</div>
+
+<!-- ══ 2. LEAD AUTOMATION ══ -->
+<div id="mod-1" class="module">
+  <div class="mod-hd">
+    <div class="mod-tag tag-blue">Module 2</div>
+    <div class="mod-title">&#9889; Lead Automation</div>
+    <div class="mod-sub">Class 2 · Web-to-Lead · Assignment Rules · Lead Queue · Auto-Response</div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#128218;</span><span class="sec-title">Key theory from the course</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="theory-box">
+        <h4>Lead automation tools</h4>
+        <ul>
+          <li><strong>Web-to-Lead:</strong> generates HTML for a web form. Limit: <strong>500 leads/day</strong>. Standard and custom fields can be included. Automatically triggers Assignment Rules and Auto-Response Rules.</li>
+          <li><strong>Lead Assignment Rules:</strong> only <strong>one active rule</strong> at a time. Each rule has multiple entries evaluated in order. No match → default owner set in Lead Settings.</li>
+          <li><strong>Lead Queue:</strong> when a queue is created, a list view is automatically created too. Members can be individual users, roles, or public groups.</li>
+          <li><strong>Auto-Response Rules:</strong> send an automatic email to the lead when it is created. Only one active rule. The email template is selected per rule entry criterion.</li>
+          <li><strong>Lead Process:</strong> a sequence of Status field values. A Lead object can have multiple processes, each assigned to a Record Type.</li>
+        </ul>
+      </div>
+      <div class="alert alert-info"><span class="alert-icon">&#128161;</span><div><strong>Golden rule for Assignment Rules:</strong> only <strong>one rule can be active</strong> at a time, but that rule can have as many <em>rule entries</em> as needed. Each entry has a criterion and an action (assign to user or queue).</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#127919;</span><span class="sec-title">Hands-on exercises</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="exercise">
+        <h4>&#9997; Exercise 1 — Create a Lead Queue</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Queues → New</strong>.</li>
+          <li>Name: <code>Packages Sales Queue</code>. Queue email: enter a valid email address.</li>
+          <li>Under "Supported Objects" add <strong>Lead</strong>.</li>
+          <li>Under "Queue Members" add Sales Agent 1 (individual user).</li>
+          <li>Save. Verify that a <strong>List View</strong> was automatically created for that queue in the Leads tab.</li>
+          <li><em>Question: Can a queue member reassign ownership of a lead from the queue to themselves?</em></li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 2 — Configure Assignment Rules</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Lead Assignment Rules → New</strong>. Name it "Genie Trips Assignment Rule" and mark it <strong>Active</strong>.</li>
+          <li>Create the first entry: Order 1, Criterion: <code>InterestType__c equals Packages</code>, Assign to: Sales Agent 1.</li>
+          <li>Create the second entry: Order 2, Criterion: <code>InterestType__c equals Flights</code>, Assign to: Sales Agent 2.</li>
+          <li>Create the third entry: Order 3, Criterion: <code>InterestType__c equals Hotels</code>, Assign to: Sales Agent 3.</li>
+          <li>Create a new lead via Web-to-Lead with Interest = Packages. Verify the owner is Sales Agent 1.</li>
+          <li><em>What happens if you create a lead with Interest = Tours (no matching rule)? Verify the default owner.</em></li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 3 — Web-to-Lead</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Web-to-Lead</strong>. Enable it if not already active.</li>
+          <li>Create the form: select fields <code>FirstName, LastName, Email, ClientType__c, InterestType__c, DocumentNumber__c</code>.</li>
+          <li>Define the return URL (any example URL will work).</li>
+          <li>Download the generated HTML. Open it in a browser and submit the form.</li>
+          <li>Verify in Salesforce that the lead was created and that Assignment Rules and Auto-Response Rules were triggered.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#9989;</span><span class="sec-title">Comprehension checklist</span><span class="sec-toggle">&#8964;</span></div>
+    <div class="sec-body">
+      <div class="checklist">
+        <h4>Check the concepts you already understand</h4>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can configure Web-to-Lead and understand its 500/day limit.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand the difference between an Assignment Rule (one active) and its multiple entries.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know what a Queue is and how its list view is created automatically.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand that Auto-Response Rules send the email to the newly created lead.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can explain what happens when a lead doesn't match any assignment rule entry.</label></div>
+      </div>
+      <div class="alert alert-warn"><span class="alert-icon">⚠</span><div><strong>Common mistake:</strong> trying to activate two Assignment Rules at the same time. Only one can be active. If you need multiple criteria, use multiple entries within the same rule.</div></div>
+    </div>
+  </div>
+  <div class="nav-btns"><button class="btn btn-g" onclick="show(0)">‹ Previous</button><button class="btn btn-p" onclick="show(2)">Next ›</button></div>
+</div>
+
+<!-- ══ 3. ACCOUNTS ══ -->
+<div id="mod-2" class="module">
+  <div class="mod-hd">
+    <div class="mod-tag tag-blue">Module 3</div>
+    <div class="mod-title">&#127970; Accounts &amp; Contacts</div>
+    <div class="mod-sub">Classes 1 &amp; 4 · Record Types · Duplicate Rules · Validation Rules</div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#128218;</span><span class="sec-title">Key theory from the course</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="theory-box">
+        <h4>Accounts as the backbone of Salesforce</h4>
+        <ul>
+          <li>The <strong>Account is the backbone of Salesforce</strong>: related to Contacts, Opportunities, Cases, and Activities.</li>
+          <li><strong>Record Types</strong> let the same object have different fields, layouts, and processes for Individual vs Business accounts — without duplicating the object.</li>
+          <li><strong>Contacts</strong> represent individual people, always related to an Account (1 account → N contacts).</li>
+          <li><strong>Duplicate Rules</strong> surface potential duplicates when creating or editing. Account merging requires the owner, their manager, or the admin.</li>
+          <li><strong>Validation Rules</strong> prevent saving incorrect data. They are evaluated before the record is saved.</li>
+        </ul>
+      </div>
+      <div class="callout"><strong>Remember (Class 7):</strong> Record Types can have different Business Processes, Paths, page layouts, and picklist values on the same object. A Record Type is assigned to profiles. Users can VIEW records of any Record Type, but can only CREATE the ones assigned to their profile.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#127919;</span><span class="sec-title">Hands-on exercises</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="exercise">
+        <h4>&#9997; Exercise 1 — Create Record Types for Account</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Object Manager → Account → Record Types → New</strong>.</li>
+          <li>Create the <strong>"Individual"</strong> type by cloning the master type. Assign it to the Sales Agent profile.</li>
+          <li>Create the <strong>"Business"</strong> type in the same way.</li>
+          <li>Create two distinct Page Layouts: one with personal fields (date of birth, document number), one with company fields (tax ID, industry).</li>
+          <li>Assign the "Individual" layout to the "Individual" Record Type and the "Business" layout to "Business".</li>
+          <li><em>Create one account of each type and verify that each displays its own layout.</em></li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 2 — Validation Rule: required document number</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Object Manager → Account → Validation Rules → New</strong>.</li>
+          <li>Name: <code>Document_Number_Required</code>.</li>
+          <li>Error formula: <code>ISBLANK(DocumentNumber__c)</code></li>
+          <li>Error message: <code>"The document number is required to save the account."</code> Location: DocumentNumber__c field.</li>
+          <li>Try to save an account without a document number. Confirm the error appears.</li>
+          <li>Fill in the document number and save successfully.</li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 3 — Duplicate Rules on Account</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Duplicate Management → Duplicate Rules</strong>.</li>
+          <li>Check if a standard rule for Account exists. If not, create a new one.</li>
+          <li>Configure the Matching Rule on <code>DocumentNumber__c</code> (exact match) and Name (fuzzy).</li>
+          <li>Create two accounts with the same document number. Verify that Salesforce shows the duplicate alert.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#9989;</span><span class="sec-title">Comprehension checklist</span><span class="sec-toggle">&#8964;</span></div>
+    <div class="sec-body">
+      <div class="checklist">
+        <h4>Check the concepts you already understand</h4>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can explain why Account is the backbone of Salesforce.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can create Record Types and assign them to profiles with different layouts.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can write a Validation Rule using ISBLANK().</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand that users can VIEW all record types but only CREATE those assigned to their profile.</label></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns"><button class="btn btn-g" onclick="show(1)">‹ Previous</button><button class="btn btn-p" onclick="show(3)">Next ›</button></div>
+</div>
+
+<!-- ══ 4. OPPORTUNITIES ══ -->
+<div id="mod-3" class="module">
+  <div class="mod-hd">
+    <div class="mod-tag tag-blue">Module 4</div>
+    <div class="mod-title">&#128176; Opportunities</div>
+    <div class="mod-sub">Class 4 · Sales Process · Path · Opportunity Teams · Splits · Forecasting</div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#128218;</span><span class="sec-title">Key theory from the course</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="theory-box">
+        <h4>Opportunity tools</h4>
+        <ul>
+          <li>The <strong>Path</strong> is linked to the Stage field and to the Sales Process. It can display up to <strong>5 key fields</strong> per stage.</li>
+          <li><strong>Opportunity Teams:</strong> users collaborate with defined roles (executive sponsor, support agent, project manager). Requires admin to enable.</li>
+          <li><strong>Opportunity Splits:</strong> distributes revenue credit among team members. Reflected in quota and pipeline reports.</li>
+          <li><strong>Contact Roles:</strong> specifies each contact's role within the opportunity.</li>
+          <li><strong>Forecast Categories:</strong> group opportunities by stage (Pipeline, Best Case, Commit, Closed). Used in Collaborative Forecasting.</li>
+          <li><strong>Quotes</strong> are generated from the opportunity and its related products. They can include discounts.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#127919;</span><span class="sec-title">Hands-on exercises</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="exercise">
+        <h4>&#9997; Exercise 1 — Sales Process + Opportunity Path</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Sales Processes → New</strong>. Name: "Individual Sales". Select stages: Qualification, Proposal, Negotiation, Closed Won, Closed Lost.</li>
+          <li>Create a second process "Business Sales" with additional stages: Needs Analysis, Internal Approval.</li>
+          <li>Create two Opportunity Record Types: "Individual" and "Business", linked to their respective processes.</li>
+          <li>Go to <strong>Setup → Path Settings → New Path</strong>. Object: Opportunity, Field: Stage, Record Type: Individual.</li>
+          <li>For the "Proposal" stage: add 3 key fields to display and a guidance text for the agent.</li>
+          <li><em>Create one opportunity of each type and verify that the Path shows the correct stages.</em></li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 2 — Flow: Chatter post when Closed Won</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Flows → New Flow → Record-Triggered Flow</strong>.</li>
+          <li>Object: Opportunity. Trigger: Record is Updated. Condition: <code>StageName EQUALS "Closed Won"</code> and value has changed.</li>
+          <li>Add action: <strong>Post to Chatter</strong>. Message: <code>"🎉 New deal closed! {!$Record.Owner.Name} closed {!$Record.Name} for {!$Record.Amount}. Let's celebrate!"</code></li>
+          <li>Target: <code>THIS_RECORD</code> (the opportunity record itself).</li>
+          <li>Activate the Flow. Change an opportunity to Closed Won and verify the Chatter post appears in the Feed.</li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 3 — Kanban view</h4>
+        <ol class="ex-steps">
+          <li>In the Opportunities tab, switch from List view to <strong>Kanban</strong> (board icon).</li>
+          <li>Verify that columns correspond to your Sales Process stages.</li>
+          <li>Drag an opportunity from "Proposal" to "Negotiation". Confirm the Stage updates in the record.</li>
+          <li><em>What information does each Kanban card display? How do you customize it?</em></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#9989;</span><span class="sec-title">Comprehension checklist</span><span class="sec-toggle">&#8964;</span></div>
+    <div class="sec-body">
+      <div class="checklist">
+        <h4>Check the concepts you already understand</h4>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can create a Sales Process and link it to a Record Type.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know how to create a Path with guidance text and key fields per stage.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can create a Flow that posts to Chatter when an opportunity is closed.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand the difference between Forecast Category and Stage.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know what Opportunity Teams and Contact Roles are used for.</label></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns"><button class="btn btn-g" onclick="show(2)">‹ Previous</button><button class="btn btn-p" onclick="show(4)">Next ›</button></div>
+</div>
+
+<!-- ══ 5. PRODUCTS ══ -->
+<div id="mod-4" class="module">
+  <div class="mod-hd">
+    <div class="mod-tag tag-orange">Module 5</div>
+    <div class="mod-title">&#128230; Products &amp; Pricing</div>
+    <div class="mod-sub">Class 4 · Product2 · Pricebooks · Product Schedules · Quotes</div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#128218;</span><span class="sec-title">Key theory from the course</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="theory-box">
+        <h4>Products and pricing</h4>
+        <ul>
+          <li><strong>Standard Pricebook:</strong> the master list of all products with their standard prices. Unique — only one per org.</li>
+          <li><strong>Custom Pricebook:</strong> an alternative list with custom prices (e.g., corporate rates, peak season).</li>
+          <li><strong>Standard Price:</strong> the product's price in the Standard Pricebook. <strong>List Price:</strong> the price in a Custom Pricebook. <strong>Sales Price:</strong> the price negotiated by the sales rep.</li>
+          <li><strong>Product Schedules:</strong> define payment and delivery cycles. Set the number of installments and frequency.</li>
+          <li>Products are added to opportunities, orders, or service contracts as <strong>Opportunity Products (Line Items)</strong>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#127919;</span><span class="sec-title">Hands-on exercises</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="exercise">
+        <h4>&#9997; Exercise 1 — Build a product catalog</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>App Launcher → Products → New</strong>.</li>
+          <li>Create the product <code>Gran Via Madrid Hotel 4*</code>. Description: "Central hotel in Madrid". Set to Active.</li>
+          <li>On the standard price screen, enter USD 150/night.</li>
+          <li>Repeat for at least 2 flights (different airlines) and 2 tours.</li>
+          <li>Create a Custom Pricebook "Corporate Rates" and add the same products at a 10% discount from the standard price.</li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 2 — Add products to an Opportunity</h4>
+        <ol class="ex-steps">
+          <li>Open an existing opportunity → related list <strong>Opportunity Products → Add Products</strong>.</li>
+          <li>Select the "Corporate Rates" Custom Pricebook.</li>
+          <li>Add: 1 flight, 1 hotel (5 nights), and 1 tour. Enter quantities.</li>
+          <li>Apply a 20% discount (complete package). Verify the total.</li>
+          <li>From the opportunity, create a <strong>Quote</strong> and verify it reflects the products and discount.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#9989;</span><span class="sec-title">Comprehension checklist</span><span class="sec-toggle">&#8964;</span></div>
+    <div class="sec-body">
+      <div class="checklist">
+        <h4>Check the concepts you already understand</h4>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand the difference between Standard Price, List Price, and Sales Price.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can create products and add them to multiple Pricebooks.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know how to add products to an opportunity and generate a Quote.</label></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns"><button class="btn btn-g" onclick="show(3)">‹ Previous</button><button class="btn btn-p" onclick="show(5)">Next ›</button></div>
+</div>
+
+<!-- ══ 6. CAMPAIGNS ══ -->
+<div id="mod-5" class="module">
+  <div class="mod-hd">
+    <div class="mod-tag tag-purple">Module 6</div>
+    <div class="mod-title">&#128227; Campaigns</div>
+    <div class="mod-sub">Class 3 · Campaign Members · Member Status · List Email · Hierarchy</div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#128218;</span><span class="sec-title">Key theory from the course</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="theory-box">
+        <h4>Campaigns</h4>
+        <ul>
+          <li>Campaigns track marketing initiatives. <strong>Members</strong> are leads, contacts, or person accounts.</li>
+          <li>Default <strong>Member Status</strong> values are Sent and Responded. Custom statuses can be added per campaign. Only one can be the default.</li>
+          <li>A status marked as "Responded" indicates active engagement from the member.</li>
+          <li><strong>List Email:</strong> sends an individual email to each member. Users can save drafts or schedule sends.</li>
+          <li><strong>Campaign Hierarchy:</strong> child campaign metrics roll up to the parent campaign in reports.</li>
+          <li><strong>Campaign Influence:</strong> attributes a percentage of success to campaigns that influenced an opportunity.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#127919;</span><span class="sec-title">Hands-on exercises</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="exercise">
+        <h4>&#9997; Exercise 1 — Create a campaign with hierarchy</h4>
+        <ol class="ex-steps">
+          <li>Create the parent campaign: <code>Peak Season 2026</code>. Type: Other. Status: Planning.</li>
+          <li>Create the child campaign: <code>Europe Summer Promo</code>. In the <strong>Parent Campaign</strong> field select "Peak Season 2026". Type: Email.</li>
+          <li>Add members to the child campaign: go to the "Campaign Members" related list → "Add Members". Add 3 leads.</li>
+          <li>Update one member's status to "Responded". Watch the campaign statistics update.</li>
+          <li><em>Go to the parent campaign. Are the child campaign metrics reflected? In which fields?</em></li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 2 — Send a List Email to campaign members</h4>
+        <ol class="ex-steps">
+          <li>Open the "Europe Summer Promo" campaign → Campaign Members related list.</li>
+          <li>Click <strong>"Send List Email"</strong>.</li>
+          <li>Select or create an email template with merge fields: <code>{!Contact.FirstName}</code>.</li>
+          <li>Customize subject and body. Preview the email with the first recipient's data.</li>
+          <li>Schedule the send for the next day. Save as a draft first, then send.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#9989;</span><span class="sec-title">Comprehension checklist</span><span class="sec-toggle">&#8964;</span></div>
+    <div class="sec-body">
+      <div class="checklist">
+        <h4>Check the concepts you already understand</h4>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can build a campaign hierarchy and understand how metrics roll up to the parent.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know how to add members and update their status (Sent / Responded).</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can send a List Email and use merge fields to personalize it.</label></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns"><button class="btn btn-g" onclick="show(4)">‹ Previous</button><button class="btn btn-p" onclick="show(6)">Next ›</button></div>
+</div>
+
+<!-- ══ 7. CASES ══ -->
+<div id="mod-6" class="module">
+  <div class="mod-hd">
+    <div class="mod-tag" style="background:var(--green-bg);color:var(--green)">Module 7</div>
+    <div class="mod-title">&#128083; Cases — Service Cloud</div>
+    <div class="mod-sub">Classes 3 &amp; 4 · Case Management · Service Console · Knowledge · Case Teams</div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#128218;</span><span class="sec-title">Key theory from the course</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="theory-box">
+        <h4>Important Case fields</h4>
+        <ul>
+          <li><strong>Case Number:</strong> auto-number, read-only, assigned automatically on creation.</li>
+          <li><strong>Case Type / Case Reason:</strong> customizable picklists that classify the case.</li>
+          <li><strong>Case Priority:</strong> determines urgency; useful in escalation rules.</li>
+          <li><strong>Case Origin:</strong> where the case came from (phone, email, web).</li>
+          <li><strong>Internal Comments:</strong> visible only to internal agents, not to the customer.</li>
+          <li>The <strong>Service Console</strong> is an app type that lets agents work multiple records simultaneously in tabs.</li>
+          <li><strong>Case Teams:</strong> allow sales agents to collaborate on cases without becoming the owner. Each member has a role with a defined access level.</li>
+        </ul>
+      </div>
+      <div class="alert alert-info"><span class="alert-icon">&#128161;</span><div><strong>Support Process:</strong> maps the case lifecycle using the Status field. Must be associated with a Record Type. Analogous to the Sales Process on Opportunities. Key difference: "closed" stages are explicitly marked in the support process.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#127919;</span><span class="sec-title">Hands-on exercises</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="exercise">
+        <h4>&#9997; Exercise 1 — Support Process + Case Record Types</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Support Processes → New</strong>. Name: "Business Support".</li>
+          <li>Add statuses: New, In Progress, Waiting on Customer, Under Review, Closed. Mark "Closed" as a closed status.</li>
+          <li>Create the "Business" Record Type for Case, linked to the "Business Support" process.</li>
+          <li>Repeat for the "Individual" process/type.</li>
+          <li>Create a Case Path for each Record Type. Add guidance in the "Waiting on Customer" status.</li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 2 — Configure Case Teams</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Case Team Roles → New</strong>. Create the role "Sales Agent" with <strong>Read Only</strong> access.</li>
+          <li>Create the role "Service Agent" with <strong>Read/Write</strong> access.</li>
+          <li>Open an existing case → <strong>Case Team</strong> related list → <strong>Add</strong>.</li>
+          <li>Add a sales user with the "Sales Agent" role.</li>
+          <li><em>Verify: can the sales agent edit the case? Can they see internal comments?</em></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#9989;</span><span class="sec-title">Comprehension checklist</span><span class="sec-toggle">&#8964;</span></div>
+    <div class="sec-body">
+      <div class="checklist">
+        <h4>Check the concepts you already understand</h4>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know the most important Case fields and what each one is used for.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can create a Support Process and link it to a Record Type.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand the difference between internal and public case comments.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can configure Case Teams with different access levels per role.</label></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns"><button class="btn btn-g" onclick="show(5)">‹ Previous</button><button class="btn btn-p" onclick="show(7)">Next ›</button></div>
+</div>
+
+<!-- ══ 8. CASE AUTOMATION ══ -->
+<div id="mod-7" class="module">
+  <div class="mod-hd">
+    <div class="mod-tag" style="background:var(--green-bg);color:var(--green)">Module 8</div>
+    <div class="mod-title">&#9881; Case Automation</div>
+    <div class="mod-sub">Class 4 · Email-to-Case · Assignment · Escalation · Auto-Response · Web-to-Case</div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#128218;</span><span class="sec-title">Key theory from the course</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="theory-box">
+        <h4>Case automation tools</h4>
+        <ul>
+          <li><strong>Email-to-Case:</strong> two variants. Standard: requires an on-premise agent, supports attachments over 25 MB. On-Demand: no installation needed, attachments under 25 MB. <strong>Once enabled, Email-to-Case cannot be disabled.</strong></li>
+          <li><strong>Web-to-Case:</strong> HTML form embedded on a website. Limit: <strong>5,000 cases/day</strong> (much higher than Web-to-Lead).</li>
+          <li><strong>Escalation Rules:</strong> one active rule, up to <strong>5 escalation actions</strong> per entry. Actions trigger if the case isn't closed after N hours.</li>
+          <li><strong>Case Auto-Response Rules:</strong> sent to the <strong>contact on the case</strong>. Only one email per criterion. One active rule at a time.</li>
+          <li><strong>Case Assignment Rules</strong> trigger when a case is created (manually, by email, web, or community).</li>
+        </ul>
+      </div>
+      <div class="alert alert-warn"><span class="alert-icon">⚠</span><div><strong>Important:</strong> Case Auto-Response Rules only send to the case contact or the "sender." You cannot send to multiple recipients with a single entry.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#127919;</span><span class="sec-title">Hands-on exercises</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="exercise">
+        <h4>&#9997; Exercise 1 — On-Demand Email-to-Case</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Email-to-Case</strong>. Enable "On-Demand Service".</li>
+          <li>Create the first routing address: email <code>support-business@[orgdomain].com</code>, Record Type: Business, Queue: "Business Service Queue".</li>
+          <li>Create the second: email <code>support@[orgdomain].com</code>, Record Type: Individual, Queue: "Individual Service Queue".</li>
+          <li>Send a test email to each address and verify that cases are created with the correct Record Type.</li>
+          <li><em>Remember: once enabled, Email-to-Case cannot be disabled. Why do you think that is?</em></li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 2 — Escalation Rule: 5-day auto-close</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Escalation Rules → New</strong>. Name it "Genie Trips Escalation Rule" and activate it.</li>
+          <li>New entry: criterion = <code>Status EQUALS Waiting on Customer</code>. Time basis: case creation date.</li>
+          <li>Add an escalation action: 120 hours (5 days). Action: Notify the Coordinator by email.</li>
+          <li>Add a second action at 144 hours (6 days): Reassign case to the Coordinator.</li>
+          <li>Complement with a <strong>Flow</strong> to automatically close the case when time has elapsed.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#9989;</span><span class="sec-title">Comprehension checklist</span><span class="sec-toggle">&#8964;</span></div>
+    <div class="sec-body">
+      <div class="checklist">
+        <h4>Check the concepts you already understand</h4>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know the difference between standard and On-Demand Email-to-Case.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can configure multiple routing addresses with different Record Types.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand how Escalation Rules work and their limit (5 actions).</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know why Email-to-Case cannot be disabled once enabled.</label></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns"><button class="btn btn-g" onclick="show(6)">‹ Previous</button><button class="btn btn-p" onclick="show(8)">Next ›</button></div>
+</div>
+
+<!-- ══ 9. OBJECT MANAGER ══ -->
+<div id="mod-8" class="module">
+  <div class="mod-hd">
+    <div class="mod-tag" style="background:var(--purple-bg);color:var(--purple)">Module 9</div>
+    <div class="mod-title">&#128196; Object Manager — Objects &amp; Relationships</div>
+    <div class="mod-sub">Classes 5, 6 &amp; 7 · Standard vs Custom · Lookup vs Master-Detail · Junction Objects</div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#128218;</span><span class="sec-title">Key theory from the course</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="theory-box">
+        <h4>Objects and relationships</h4>
+        <ul>
+          <li><strong>Standard Objects</strong> cannot be deleted. <strong>Custom Objects</strong> can (API name ends in <code>__c</code>).</li>
+          <li><strong>Lookup:</strong> loose coupling, no Roll-Up, parent not required, no cascade delete. Up to 40 per object.</li>
+          <li><strong>Master-Detail:</strong> tight coupling, enables Roll-Up, parent required, cascade delete. Max 2 per object. Parent controls the Owner of the child.</li>
+          <li><strong>Junction Object</strong> (many-to-many): an object with 2 Master-Detail relationships. Example: Contact ↔ Class (via Class Registration).</li>
+          <li><strong>Cross-object Formulas:</strong> let you reference parent fields from a child formula field. Work with both Lookup and Master-Detail.</li>
+        </ul>
+      </div>
+      <div class="alert alert-info"><span class="alert-icon">&#128161;</span><div><strong>Note:</strong> although Account→Opportunity looks like a Lookup, Salesforce applies special data integrity rules on standard related objects. It's not a Master-Detail, but it prevents deleting an Account that has active Opportunities.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#127919;</span><span class="sec-title">Hands-on exercises</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="exercise">
+        <h4>&#9997; Exercise 1 — Create the Ticket__c object</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Object Manager → Create → Custom Object</strong>.</li>
+          <li>Label: <code>Travel Ticket</code>. Plural: <code>Travel Tickets</code>. API Name auto-fills: <code>Ticket__c</code>.</li>
+          <li>Enable: "Allow Reports", "Allow Activities", "Track Field History".</li>
+          <li>Save. Go to the object → <strong>Fields & Relationships → New → Lookup Relationship</strong>.</li>
+          <li>Relate to <strong>Opportunity</strong>. Label: "Opportunity". API Name: <code>Opportunity__c</code>.</li>
+          <li>Verify that in the Opportunity object a new "Travel Tickets" related list now appears.</li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 2 — Explore the Schema Builder</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Schema Builder</strong>.</li>
+          <li>Select objects: Account, Contact, Opportunity, Ticket__c, ReservaHotel__c.</li>
+          <li>Visually inspect the relationships between them. Identify which are Lookup and which are Master-Detail.</li>
+          <li>From Schema Builder, add a new text field directly to Ticket__c in the diagram.</li>
+          <li><em>What visual difference does Schema Builder show between a Lookup and a Master-Detail relationship?</em></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#9989;</span><span class="sec-title">Comprehension checklist</span><span class="sec-toggle">&#8964;</span></div>
+    <div class="sec-body">
+      <div class="checklist">
+        <h4>Check the concepts you already understand</h4>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can explain the differences between Lookup and Master-Detail with at least 4 characteristics.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know when and how to create a Junction Object for a many-to-many relationship.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand why Custom Objects end in __c in their API Name.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can use Schema Builder to visualize the data model.</label></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns"><button class="btn btn-g" onclick="show(7)">‹ Previous</button><button class="btn btn-p" onclick="show(9)">Next ›</button></div>
+</div>
+
+<!-- ══ 10. FIELDS ══ -->
+<div id="mod-9" class="module">
+  <div class="mod-hd">
+    <div class="mod-tag" style="background:var(--purple-bg);color:var(--purple)">Module 10</div>
+    <div class="mod-title">&#128279; Fields &amp; Relationships</div>
+    <div class="mod-sub">Class 6 · Field types · Roll-Up · Formula · FLS · Picklist Dependencies</div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#128218;</span><span class="sec-title">Key theory from the course</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="theory-box">
+        <h4>Field types and key concepts</h4>
+        <ul>
+          <li><strong>Roll-Up Summary:</strong> Master-Detail only. Created on the parent, extracts data from the child. Operations: COUNT, SUM, MIN, MAX. Max 25 per object. Read-only.</li>
+          <li><strong>Formula Field:</strong> calculates in real time (does not store the value). Can reference fields on the same record or from a parent (cross-object). Types: Checkbox, Date, Number, Text, Currency, Percent.</li>
+          <li><strong>Field-Level Security (FLS):</strong> Visible = editable, Read-Only = view only, unchecked = hidden. Best practice: manage via Permission Sets rather than profiles.</li>
+          <li><strong>Picklist Dependencies:</strong> a controlling field determines what values the dependent field shows. The controlling field must be a picklist or checkbox.</li>
+          <li><strong>Field History Tracking:</strong> can be enabled for up to 20 fields per object to track value changes. History appears in the "Field History" related list.</li>
+        </ul>
+      </div>
+      <table class="dtable">
+        <thead><tr><th>Feature</th><th>Roll-Up Summary</th><th>Formula Field</th></tr></thead>
+        <tbody>
+          <tr><td>Direction</td><td>Children → Parent</td><td>Same record or Parent → Child</td></tr>
+          <tr><td>Required relationship</td><td>Master-Detail required</td><td>Any relationship</td></tr>
+          <tr><td>Storage</td><td>Value stored in DB</td><td>Calculated in real time</td></tr>
+          <tr><td>Example</td><td>Total nights in hotel bookings</td><td>Age calculated from date of birth</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#127919;</span><span class="sec-title">Hands-on exercises</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="exercise">
+        <h4>&#9997; Exercise 1 — Formula Field: passenger age</h4>
+        <ol class="ex-steps">
+          <li>In <strong>Ticket__c → Fields &amp; Relationships → New → Formula</strong>.</li>
+          <li>Label: <code>Age</code>. Return type: <strong>Number</strong>, decimal places: 0.</li>
+          <li>Formula: <code>FLOOR((TODAY() - BirthDate__c) / 365.25)</code></li>
+          <li>Save. Create a Ticket with a date of birth and verify that the Age field calculates automatically.</li>
+          <li><em>Can you manually edit the Age field? Why not?</em></li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 2 — Picklist Dependency: hotel services</h4>
+        <ol class="ex-steps">
+          <li>In <strong>ReservaHotel__c</strong>, create a Picklist field "Service Category": values: Transportation, Food, Assistance.</li>
+          <li>Create a Multi-Select Picklist "Specific Service" with values for all categories.</li>
+          <li>Go to <strong>Fields &amp; Relationships → Field Dependencies → New</strong>.</li>
+          <li>Controlling: "Service Category". Dependent: "Specific Service".</li>
+          <li>Map: Transportation → Taxi, Transfer. Food → Breakfast, Half Board. Assistance → Medical, Special.</li>
+          <li>Verify that selecting "Transportation" shows only Taxi and Transfer.</li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 3 — Field History Tracking on ReservaHotel__c</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Object Manager → ReservaHotel__c → Fields &amp; Relationships</strong>.</li>
+          <li>Click <strong>"Set History Tracking"</strong>. Enable tracking for: <code>DepartureDate__c</code> and <code>DepartureTime__c</code>.</li>
+          <li>Add the "ReservaHotel__c History" related list to the Page Layout.</li>
+          <li>Create a hotel booking, then modify the departure date. Verify that the history shows the change.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#9989;</span><span class="sec-title">Comprehension checklist</span><span class="sec-toggle">&#8964;</span></div>
+    <div class="sec-body">
+      <div class="checklist">
+        <h4>Check the concepts you already understand</h4>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can create a date formula (age, difference in days) without errors.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand why formula fields are read-only.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can configure a picklist dependency (controlling / dependent).</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know how to enable Field History Tracking and where the history is visible.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand the conceptual difference between a Roll-Up Summary and a Formula Field.</label></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns"><button class="btn btn-g" onclick="show(8)">‹ Previous</button><button class="btn btn-p" onclick="show(10)">Next ›</button></div>
+</div>
+
+<!-- ══ 11. LAYOUTS ══ -->
+<div id="mod-10" class="module">
+  <div class="mod-hd">
+    <div class="mod-tag" style="background:var(--purple-bg);color:var(--purple)">Module 11</div>
+    <div class="mod-title">&#128451; Page Layouts, Record Types &amp; Paths</div>
+    <div class="mod-sub">Classes 6 &amp; 7 · Page Layout · Compact Layout · Business Processes · Path</div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#128218;</span><span class="sec-title">Key theory from the course</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="theory-box">
+        <h4>Layouts and record types</h4>
+        <ul>
+          <li>The <strong>Page Layout</strong> controls which fields, sections, buttons, and related lists appear on a record.</li>
+          <li><strong>Page Layout assignment is done by profile + record type</strong> (in the profile, not in the record type).</li>
+          <li>The <strong>Compact Layout</strong> controls the fields shown in the mobile app, on hover previews, and in Outlook/Gmail integrations.</li>
+          <li>For Opportunity, Lead, Case, and Solutions: a <strong>Business Process</strong> must be created BEFORE creating the Record Type.</li>
+          <li>The <strong>Path</strong> can show guidance and up to 5 fields per stage. It exists by default on Opportunity. Can be created for custom objects.</li>
+          <li>Available picklist values per Record Type are managed inside the Record Type itself (not in the field definition).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#127919;</span><span class="sec-title">Hands-on exercises</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="exercise">
+        <h4>&#9997; Exercise 1 — Page Layout with logical sections</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Object Manager → Account → Page Layouts → New layout "Account Individual"</strong>.</li>
+          <li>Create three sections: "Personal Data" (2 columns), "Contact Info" (2 columns), "CRM Genie Trips" (1 column).</li>
+          <li>Drag to "Personal Data": Name, Document Number, Date of Birth, Client Type.</li>
+          <li>Drag to "CRM Genie Trips": CrossSell__c (Read-Only), Total Opportunities (Roll-Up).</li>
+          <li>In the "Opportunities" related list: define the columns to display (Name, Amount, Stage, Close Date).</li>
+          <li>Assign this layout to the "Sales Agent" profile + "Individual" Record Type.</li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 2 — Compact Layout for mobile</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Object Manager → Account → Compact Layouts → New</strong>.</li>
+          <li>Name: "Individual Compact". Add: Name, Document Number, Client Type, Owner, Phone.</li>
+          <li>Go to <strong>Compact Layout Assignment</strong> and assign it to the "Individual" Record Type.</li>
+          <li>In the Accounts tab, hover over an account name. Verify that the Compact Layout fields appear in the hover preview.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#9989;</span><span class="sec-title">Comprehension checklist</span><span class="sec-toggle">&#8964;</span></div>
+    <div class="sec-body">
+      <div class="checklist">
+        <h4>Check the concepts you already understand</h4>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know that Page Layout assignment is done in the PROFILE, not the Record Type.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand what the Compact Layout is and where it's displayed.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can create sections, organize fields, and configure related list columns in a layout.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know that Lead, Opportunity, and Case need a Business Process before creating a Record Type.</label></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns"><button class="btn btn-g" onclick="show(9)">‹ Previous</button><button class="btn btn-p" onclick="show(11)">Next ›</button></div>
+</div>
+
+<!-- ══ 12. USERS PROFILES ROLES ══ -->
+<div id="mod-11" class="module">
+  <div class="mod-hd">
+    <div class="mod-tag" style="background:var(--red-bg);color:var(--red)">Module 12</div>
+    <div class="mod-title">&#128101; Users, Profiles &amp; Roles</div>
+    <div class="mod-sub">Classes 8 &amp; 10 · User Creation · Licenses · Profiles · Permission Sets · OWD · Role Hierarchy</div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#128218;</span><span class="sec-title">Key theory from the course</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="theory-box">
+        <h4>Layered security model</h4>
+        <ul>
+          <li><strong>Profiles → Structure:</strong> control what the user can do — which objects, fields, layouts, and apps they can access. Library analogy: what you're allowed to do inside the library.</li>
+          <li><strong>Roles → Data:</strong> control which records the user can see. Users higher in the hierarchy see records owned by their subordinates. Library analogy: which specific books you can access.</li>
+          <li><strong>OWD (Org-Wide Defaults):</strong> the most restrictive access baseline. Private = only the owner (and hierarchy) can see. Subsequent layers can only open access, never restrict it.</li>
+          <li><strong>Sharing Rules:</strong> extend access horizontally (between roles or groups at the same level).</li>
+          <li><strong>Permission Sets:</strong> can only add permissions, never remove them. A user can have multiple Permission Sets.</li>
+          <li>Only in profiles: Login Hours, IP Ranges, Page Layout Assignment, default Record Type, default App.</li>
+        </ul>
+      </div>
+      <div class="callout"><strong>Classroom analogy (library):</strong> Profiles define what you can do inside the library (read, write, access sections). Roles determine which specific books or information you can access.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#127919;</span><span class="sec-title">Hands-on exercises</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="exercise">
+        <h4>&#9997; Exercise 1 — Genie Trips role hierarchy</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Roles → Set Up Roles</strong>. Build the full agency tree.</li>
+          <li>Level 1: CEO. Level 2: Agency Manager, Finance Manager, Marketing Manager.</li>
+          <li>Level 3 (under Agency Manager): Agent Coordinator.</li>
+          <li>Level 4: Sales Agent (Packages), Sales Agent (Flights), Sales Agent (Hotels), Service Agent Business, Service Agent Individual.</li>
+          <li>Assign the roles to the corresponding users.</li>
+          <li><em>Verify: Can the Coordinator see accounts owned by sales agents below them?</em></li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 2 — Create a Sales Agent profile</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Profiles</strong>. Clone "Standard User" → name: "Genie Trips Sales Agent".</li>
+          <li>Object Permissions: CRUD on Lead, Account, Contact, Opportunity. Read on Case.</li>
+          <li>Field-Level Security on Lead: ensure <code>InterestType__c</code> and <code>DocumentNumber__c</code> are Visible and Editable.</li>
+          <li>Standard Object Permissions: enable <strong>"Convert Leads"</strong>.</li>
+          <li>Assign this profile to a test user and verify they can create and convert leads.</li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 3 — OWD Private + Sharing Rule</h4>
+        <ol class="ex-steps">
+          <li>Go to <strong>Setup → Sharing Settings</strong>. Change Account to <strong>Private</strong>. Confirm the impact.</li>
+          <li>Create a Sharing Rule for Account: "Based on criteria — Owner in role Sales Agent → share Read/Write with role Coordinator".</li>
+          <li>Verify that a Service Agent CANNOT see an account they don't own.</li>
+          <li>Add the Service Agent as a Case Team member on a case related to that account.</li>
+          <li><em>Can the Service Agent now see the account? Why or why not?</em></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#9989;</span><span class="sec-title">Comprehension checklist</span><span class="sec-toggle">&#8964;</span></div>
+    <div class="sec-body">
+      <div class="checklist">
+        <h4>Check the concepts you already understand</h4>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can explain the difference between Profiles (structure) and Roles (data) with examples.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand that security layers can only OPEN access, never restrict it.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can configure OWD Private and a Sharing Rule to extend access.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand that Permission Sets can only ADD permissions, and a user can have several.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can create a custom profile by cloning a standard one.</label></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns"><button class="btn btn-g" onclick="show(10)">‹ Previous</button><button class="btn btn-p" onclick="show(12)">Next ›</button></div>
+</div>
+
+<!-- ══ 13. DATA MANAGEMENT ══ -->
+<div id="mod-12" class="module">
+  <div class="mod-hd">
+    <div class="mod-tag" style="background:var(--orange-bg);color:var(--orange)">Module 13</div>
+    <div class="mod-title">&#128190; Data Management</div>
+    <div class="mod-sub">Classes 10, 11 &amp; 12 · Import Wizard · Data Loader · Mass Transfer · External ID · Storage</div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#128218;</span><span class="sec-title">Key theory from the course</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="theory-box">
+        <h4>Data management tools</h4>
+        <ul>
+          <li><strong>Import Wizard:</strong> web-based, up to 50,000 records, Insert/Update only, no Delete or Export.</li>
+          <li><strong>Data Loader:</strong> installable client, up to 5,000,000 records, all operations including Hard Delete and Export All.</li>
+          <li><strong>Upsert:</strong> if record exists → UPDATE, if not → INSERT. The go-to operation for integrations. Works with Record ID or External ID.</li>
+          <li><strong>External ID:</strong> a field marked as an external identifier (Text/Number/Email type). Used to relate records with external systems. Max 25 per object.</li>
+          <li><strong>Record ID:</strong> 15 or 18 characters. The 18-char version is case-insensitive and recommended for APIs. Never changes — even if a record is deleted and restored.</li>
+          <li><strong>Mass Transfer:</strong> changes record ownership in bulk. Does not move data between objects. Requires being above in the hierarchy or having Modify All.</li>
+          <li><strong>Enterprise Edition storage:</strong> minimum 10 GB data + 10 GB files. +20 MB data and +2 GB files per licensed user.</li>
+        </ul>
+      </div>
+      <div class="alert alert-err"><span class="alert-icon">&#128683;</span><div><strong>Critical warning:</strong> during any data load operation, <strong>Validation Rules, Flows, Workflow Rules, and Triggers run</strong>. A mass load can trigger thousands of automations simultaneously. Always test in Sandbox first.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#127919;</span><span class="sec-title">Hands-on exercises</span><span class="sec-toggle open">&#8964;</span></div>
+    <div class="sec-body open">
+      <div class="exercise">
+        <h4>&#9997; Exercise 1 — Load 50 test leads with Import Wizard</h4>
+        <ol class="ex-steps">
+          <li>Generate a CSV with 50 rows using Mockaroo: FirstName, LastName, Email, Phone, DocumentNumber__c, ClientType__c, InterestType__c.</li>
+          <li>Go to <strong>Setup → Data Import Wizard → Launch Wizard!</strong></li>
+          <li>Select object: <strong>Leads</strong>. Action: <strong>Add new records</strong>.</li>
+          <li>Upload the CSV. In the mapping step, match each CSV column to the correct Salesforce field.</li>
+          <li>Pay attention: map <code>ClientType__c</code> and <code>InterestType__c</code> to their custom fields.</li>
+          <li>Review that the duplicate detection field is set to Email.</li>
+          <li>Run the import. In the Leads tab, verify all 50 records were created.</li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 2 — Export leads with Data Loader</h4>
+        <ol class="ex-steps">
+          <li>Open <strong>Data Loader</strong> installed locally. Log in with your Salesforce credentials.</li>
+          <li>Select operation: <strong>Export</strong>. Object: Lead.</li>
+          <li>Use the query: <code>SELECT Id, FirstName, LastName, Email, Status, InterestType__c FROM Lead WHERE IsConverted = false</code></li>
+          <li>Save the resulting CSV file. Open it and verify the fields are correct.</li>
+          <li>Modify the Status of 5 leads in the CSV to "Working". Use the <strong>Update</strong> operation with that modified column.</li>
+          <li>Verify in Salesforce that those 5 leads have the updated Status.</li>
+        </ol>
+      </div>
+      <div class="exercise">
+        <h4>&#9997; Exercise 3 — Upsert with External ID</h4>
+        <ol class="ex-steps">
+          <li>Create an External ID field on Lead: <code>ERP_Lead_ID__c</code>, type Text, mark as External ID and Unique.</li>
+          <li>Prepare a CSV with: <code>ERP_Lead_ID__c, FirstName, LastName, Email, Status</code>. Include 3 IDs that already exist and 2 new ones.</li>
+          <li>In Data Loader, select the <strong>Upsert</strong> operation. Choose <code>ERP_Lead_ID__c</code> as the Matching ID.</li>
+          <li>Run. Verify in the log that 3 records were <em>Updated</em> and 2 were <em>Inserted</em>.</li>
+          <li><em>What advantage does Upsert have over running Update first and then Insert separately?</em></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd" onclick="tog(this)"><span class="sec-icon">&#9989;</span><span class="sec-title">Final comprehension checklist</span><span class="sec-toggle">&#8964;</span></div>
+    <div class="sec-body">
+      <div class="checklist">
+        <h4>Check the concepts you already understand</h4>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know when to use Import Wizard vs Data Loader based on volume and operation type.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I can explain Upsert: when it updates and when it inserts.</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand the difference between Delete (Recycle Bin) and Hard Delete (permanent).</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I know what an External ID is and its limit (25 per object).</label></div>
+        <div class="check-item" onclick="chk(this)"><input type="checkbox"><label>I understand that automations and validation rules run during data loads.</label></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns"><button class="btn btn-g" onclick="show(11)">‹ Previous</button><button class="btn btn-g" onclick="show(0)">&#8679; Back to start</button></div>
+  <div class="mod-counter">&#127881; All 13 modules complete!</div>
+</div>
+
+</main>
+</div>
+
+<script>
+const TOTAL = 13;
+var completed = [];
+function show(idx){
+  document.querySelectorAll('.module').forEach(m=>m.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('mod-'+idx).classList.add('active');
+  document.querySelectorAll('.sb-item')[idx].classList.add('active');
+  window.scrollTo(0,0);
+  if(!completed.includes(idx)) completed.push(idx);
+  var pct=Math.round((completed.length/TOTAL)*100);
+  document.getElementById('pbar').style.width=pct+'%';
+  document.getElementById('prog-label').textContent=completed.length+' / '+TOTAL;
+  document.querySelectorAll('.sb-item').forEach(function(item,i){
+    if(completed.includes(i)&&i!==idx){
+      item.querySelector('.sb-num').style.background='var(--green)';
+      item.querySelector('.sb-num').style.color='#fff';
+    }
+  });
+}
+function tog(hd){
+  var body=hd.nextElementSibling,tog=hd.querySelector('.sec-toggle');
+  body.classList.toggle('open');tog.classList.toggle('open');
+}
+function chk(item){
+  var cb=item.querySelector('input[type=checkbox]');
+  cb.checked=!cb.checked;
+  item.classList.toggle('checked',cb.checked);
+}
+document.querySelectorAll('.check-item label').forEach(function(lbl){
+  lbl.addEventListener('click',function(e){
+    e.stopPropagation();
+    var item=lbl.closest('.check-item');
+    item.classList.toggle('checked',item.querySelector('input').checked);
+  });
+});
+</script>
+</body>
+</html>
