@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Salesforce — Course Prototypes</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sf-blue:#0176D3;--sf-dark:#032D60;--sf-mid:#0E4FA5;
+  --sf-light:#EAF4FF;--sf-green:#2E844A;--sf-green-bg:#E8F7EA;
+  --sf-orange:#E07400;--sf-orange-bg:#FFF3E0;
+  --sf-red:#BA0517;--sf-red-bg:#FEEEF0;
+  --sf-purple:#5867E8;--sf-teal:#0D9DDA;
+  --bg:#F3F2F2;--white:#FFFFFF;
+  --text:#181818;--text2:#444;--text3:#706E6B;
+  --border:#DDDBDA;--shadow:0 2px 4px rgba(0,0,0,.1);
+  --r:4px;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.4}
+.topbar{height:52px;background:var(--sf-dark);display:flex;align-items:center;padding:0 16px;gap:12px;position:fixed;top:0;left:0;right:0;z-index:1000}
+.logo{color:#fff;font-size:17px;font-weight:700;letter-spacing:-.5px;white-space:nowrap}
+.logo span{color:#00A1E0}
+.nav-search{flex:1;max-width:380px;height:32px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:var(--r);padding:0 12px;color:#fff;font-size:13px;outline:none}
+.nav-search::placeholder{color:rgba(255,255,255,.55)}
+.nav-pills{display:flex;gap:2px;margin-left:16px}
+.nav-pill{padding:6px 12px;color:rgba(255,255,255,.8);font-size:13px;border-radius:var(--r);cursor:pointer;transition:.1s}
+.nav-pill:hover{background:rgba(255,255,255,.15);color:#fff}
+.nav-user{margin-left:auto;display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.8);font-size:13px}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--sf-blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;border:2px solid rgba(255,255,255,.4)}
+.layout{display:flex;margin-top:52px;min-height:calc(100vh - 52px)}
+.sidebar{width:256px;flex-shrink:0;background:#fff;border-right:1px solid var(--border);position:fixed;top:52px;bottom:0;overflow-y:auto;padding:8px 0}
+.sb-head{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:12px 16px 4px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:7px 16px;cursor:pointer;color:var(--text2);font-size:13px;border-left:3px solid transparent;transition:.12s;text-decoration:none}
+.sb-item:hover{background:#F3F9FF;color:var(--text)}
+.sb-item.active{background:var(--sf-light);color:var(--sf-blue);border-left-color:var(--sf-blue);font-weight:500}
+.sb-ico{font-size:15px;width:18px;text-align:center}
+.sb-divider{border:none;border-top:1px solid var(--border);margin:6px 0}
+.content{margin-left:256px;flex:1;padding:20px 24px}
+.module{display:none}.module.active{display:block}
+.mod-title{font-size:20px;font-weight:600;color:var(--sf-dark);margin-bottom:2px}
+.mod-sub{color:var(--text3);font-size:13px;margin-bottom:18px}
+.card{background:#fff;border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:14px}
+.card-hd{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#FAFAF9}
+.card-hd-title{font-size:13px;font-weight:600;color:var(--text)}
+.card-body{padding:14px}
+.card-body-pad0{padding:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.note{background:#FFFAEA;border:1px solid #F4C430;border-radius:var(--r);padding:9px 11px;font-size:12px;color:#4A3B00;margin-bottom:12px;display:flex;gap:7px;align-items:flex-start;line-height:1.5}
+.note-ico{flex-shrink:0;font-size:14px}
+.sf-path{display:flex;margin-bottom:14px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.path-step{flex:1;padding:9px 4px 9px 18px;font-size:11px;font-weight:600;background:#F3F2F2;border-right:1px solid var(--border);color:var(--text3);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%,10px 50%);text-align:center;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.path-step:first-child{clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%)}
+.path-step:last-child{clip-path:polygon(0 0,100% 0,100% 100%,0 100%,10px 50%);border-right:none}
+.path-step.active{background:var(--sf-blue);color:#fff}
+.path-step.done{background:var(--sf-green);color:#fff}
+.path-step.lost{background:var(--sf-red);color:#fff}
+.rec-head{background:var(--sf-dark);color:#fff;padding:14px 18px;border-radius:var(--r) var(--r) 0 0}
+.rec-type{font-size:10px;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.rec-name{font-size:18px;font-weight:600;margin-bottom:6px}
+.rec-meta{display:flex;gap:16px;font-size:12px;color:rgba(255,255,255,.75)}
+.rec-meta span{display:flex;align-items:center;gap:4px}
+.fields{display:grid;grid-template-columns:repeat(3,1fr)}
+.f{padding:9px 12px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.f-lbl{font-size:11px;color:var(--text3);font-weight:500;margin-bottom:2px}
+.f-val{font-size:13px;color:var(--text)}
+.f-val a{color:var(--sf-blue);text-decoration:none}
+.bdg{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.bdg-new{background:var(--sf-light);color:var(--sf-blue)}
+.bdg-ok{background:var(--sf-green-bg);color:var(--sf-green)}
+.bdg-warn{background:var(--sf-orange-bg);color:var(--sf-orange)}
+.bdg-err{background:var(--sf-red-bg);color:var(--sf-red)}
+.bdg-gray{background:#F3F2F2;color:var(--text2)}
+.bdg-purple{background:#F0EFFF;color:var(--sf-purple)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:#F3F2F2;padding:7px 11px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid var(--border)}
+.tbl td{padding:9px 11px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:hover td{background:#F3F9FF}
+.tbl td a{color:var(--sf-blue);text-decoration:none;font-weight:500}
+.tbl td.yes{color:var(--sf-green);font-weight:600;text-align:center}
+.tbl td.no{color:var(--sf-red);font-weight:600;text-align:center}
+.btn{padding:6px 14px;border-radius:var(--r);font-size:13px;cursor:pointer;border:1px solid transparent;font-weight:500;transition:.1s}
+.btn-p{background:var(--sf-blue);color:#fff;border-color:var(--sf-blue)}
+.btn-p:hover{background:var(--sf-mid)}
+.btn-s{background:#fff;color:var(--sf-blue);border-color:var(--sf-blue)}
+.btn-s:hover{background:var(--sf-light)}
+.btn-n{background:#fff;color:var(--text2);border-color:var(--border)}
+.btn-row{display:flex;gap:8px;align-items:center}
+.kanban{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px}
+.k-col{min-width:190px;background:#F3F2F2;border-radius:var(--r);padding:9px}
+.k-col-hd{font-size:11px;font-weight:700;color:var(--text3);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;text-transform:uppercase}
+.k-cnt{background:rgba(0,0,0,.1);border-radius:9px;padding:1px 6px;font-size:10px;color:var(--text3)}
+.k-card{background:#fff;border-radius:var(--r);border:1px solid var(--border);padding:9px;margin-bottom:7px;font-size:12px;cursor:pointer;transition:.1s}
+.k-card:hover{box-shadow:var(--shadow)}
+.k-title{font-weight:600;color:var(--sf-blue);margin-bottom:3px}
+.k-meta{color:var(--text3);font-size:11px}
+.k-amt{font-weight:600;color:var(--text);margin-top:4px;font-size:13px}
+.ch-post{border:1px solid var(--border);border-radius:var(--r);padding:11px 12px;margin-bottom:9px;background:#fff}
+.ch-hd{display:flex;gap:9px;align-items:flex-start;margin-bottom:6px}
+.ch-user{font-weight:600;font-size:13px}
+.ch-time{font-size:11px;color:var(--text3)}
+.ch-body{font-size:13px;color:var(--text);line-height:1.55;margin-left:40px}
+.ch-like{font-size:11px;color:var(--sf-blue);margin-left:40px;margin-top:5px;cursor:pointer}
+.tl-item{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--border)}
+.tl-ico{width:30px;height:30px;border-radius:50%;background:var(--sf-light);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;border:1px solid rgba(1,118,211,.2)}
+.tl-body{flex:1}
+.tl-title{font-weight:500;font-size:13px}
+.tl-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.console{background:#1B1B1B;border-radius:var(--r);overflow:hidden}
+.c-tabs{background:#2B2B2B;display:flex;border-bottom:1px solid #3A3A3A}
+.c-tab{padding:7px 14px;color:#AAA;cursor:pointer;border-right:1px solid #3A3A3A;font-size:12px;white-space:nowrap}
+.c-tab.active{background:#1B1B1B;color:#fff;border-bottom:2px solid #00A1E0}
+.c-body{display:grid;grid-template-columns:220px 1fr;height:300px}
+.c-list{border-right:1px solid #2D2D2D;overflow-y:auto}
+.c-case{padding:9px 11px;border-bottom:1px solid #2A2A2A;cursor:pointer}
+.c-case:hover,.c-case.active{background:#252525}
+.c-id{font-size:10px;color:#777}
+.c-ctitle{font-size:12px;color:#DDD;margin:2px 0}
+.c-status{display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px}
+.c-detail{padding:14px;color:#CCC;overflow-y:auto}
+.c-flbl{font-size:10px;color:#777;margin-bottom:1px}
+.c-fval{font-size:12px;color:#EEE;margin-bottom:10px}
+.wiz{display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.wiz-step{flex:1;padding:11px 8px;text-align:center;background:#F3F2F2;border-right:1px solid var(--border);font-size:12px}
+.wiz-step:last-child{border-right:none}
+.wiz-step.active{background:var(--sf-blue);color:#fff}
+.wiz-step.done{background:var(--sf-green);color:#fff}
+.wiz-n{font-size:20px;font-weight:700}
+.wiz-l{font-size:11px;margin-top:2px}
+.sf-form{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.sf-f{display:flex;flex-direction:column;gap:3px}
+.sf-f label{font-size:11px;font-weight:600;color:var(--text3)}
+.sf-f input,.sf-f select,.sf-f textarea{height:32px;border:1px solid var(--border);border-radius:var(--r);padding:0 8px;font-size:13px;color:var(--text);outline:none;background:#fff}
+.sf-f textarea{height:56px;padding:6px 8px;resize:none}
+.sf-f input:focus,.sf-f select:focus{border-color:var(--sf-blue);box-shadow:0 0 0 2px rgba(1,118,211,.18)}
+.sf-f .req{color:var(--sf-red);margin-left:2px}
+.rl-hd{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#FAFAF9;border-bottom:1px solid var(--border)}
+.rl-title{font-size:13px;font-weight:600}
+.rl-cnt{background:var(--sf-blue);color:#fff;border-radius:9px;padding:1px 7px;font-size:11px;margin-left:6px}
+.tag{display:inline-block;background:#F3F2F2;border:1px solid var(--border);border-radius:12px;padding:2px 9px;font-size:11px;color:var(--text2);margin:2px 2px}
+.rel-box{border:2px solid var(--sf-blue);border-radius:var(--r);padding:12px;text-align:center;font-size:13px;font-weight:600;color:var(--sf-blue);background:var(--sf-light)}
+.rel-box.master{border-color:var(--sf-dark);color:var(--sf-dark);background:#EEF2F8}
+.rel-arr{text-align:center;color:var(--sf-blue);font-size:20px;padding:4px}
+.hl{background:var(--sf-light);border-left:3px solid var(--sf-blue);padding:9px 12px;border-radius:0 var(--r) var(--r) 0;font-size:13px;margin-bottom:12px;line-height:1.5}
+.hl strong{color:var(--sf-dark)}
+.diff-table{width:100%;border-collapse:collapse;font-size:12px}
+.diff-table th{padding:7px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);background:#F3F2F2;border-bottom:2px solid var(--border)}
+.diff-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.diff-table td:first-child{font-weight:500;color:var(--text);width:30%}
+.diff-table td.yes{color:var(--sf-green);font-weight:600;text-align:center}
+.diff-table td.no{color:var(--sf-red);font-weight:600;text-align:center}
+.sec-div{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin:18px 0 10px;padding-bottom:4px;border-bottom:2px solid var(--border)}
+@media(max-width:900px){
+  .sidebar{width:200px}.content{margin-left:200px}
+  .g2,.g3{grid-template-columns:1fr}.fields{grid-template-columns:1fr 1fr}
+  .sf-form{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="logo">&#9889; <span>Sales</span>force</div>
+  <input class="nav-search" type="text" placeholder="&#128269; Search Salesforce...">
+  <div class="nav-pills">
+    <div class="nav-pill">Home</div>
+    <div class="nav-pill">Opportunities</div>
+    <div class="nav-pill">Leads</div>
+    <div class="nav-pill">Accounts</div>
+    <div class="nav-pill">Cases</div>
+  </div>
+  <div class="nav-user">
+    <div class="avatar">AG</div>
+    Agent Genie
+  </div>
+</nav>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-head">Sales</div>
+  <a class="sb-item active" onclick="show('leads')" href="#">&#128100; Leads</a>
+  <a class="sb-item" onclick="show('accounts')" href="#">&#127970; Accounts &amp; Contacts</a>
+  <a class="sb-item" onclick="show('opportunities')" href="#">&#128176; Opportunities</a>
+  <a class="sb-item" onclick="show('products')" href="#">&#128230; Products &amp; Pricing</a>
+  <a class="sb-item" onclick="show('campaigns')" href="#">&#128227; Campaigns</a>
+  <hr class="sb-divider">
+  <div class="sb-head">Service</div>
+  <a class="sb-item" onclick="show('cases')" href="#">&#128083; Cases</a>
+  <a class="sb-item" onclick="show('caseautomation')" href="#">&#9881; Case Automation</a>
+  <hr class="sb-divider">
+  <div class="sb-head">Platform</div>
+  <a class="sb-item" onclick="show('objectmanager')" href="#">&#128196; Object Manager</a>
+  <a class="sb-item" onclick="show('fields')" href="#">&#128279; Fields &amp; Relationships</a>
+  <a class="sb-item" onclick="show('pagelayouts')" href="#">&#128451; Page Layouts</a>
+  <hr class="sb-divider">
+  <div class="sb-head">Configuration</div>
+  <a class="sb-item" onclick="show('users')" href="#">&#128101; Users &amp; Licenses</a>
+  <a class="sb-item" onclick="show('profiles')" href="#">&#128274; Profiles &amp; Permissions</a>
+  <a class="sb-item" onclick="show('security')" href="#">&#128272; Security &amp; Roles</a>
+  <hr class="sb-divider">
+  <div class="sb-head">Data &amp; Analytics</div>
+  <a class="sb-item" onclick="show('datamanagement')" href="#">&#128190; Data Management</a>
+  <a class="sb-item" onclick="show('reports')" href="#">&#128202; Reports &amp; Dashboards</a>
+  <hr class="sb-divider">
+  <div class="sb-head">Productivity</div>
+  <a class="sb-item" onclick="show('activities')" href="#">&#128197; Activities</a>
+  <a class="sb-item" onclick="show('chatter')" href="#">&#128172; Chatter</a>
+</aside>
+
+<main class="content">
+
+<!-- LEADS -->
+<section id="mod-leads" class="module active">
+  <div class="mod-title">&#128100; Leads — Prospective Customers</div>
+  <div class="mod-sub">Standard object &middot; Process: New &rarr; Qualified &rarr; Converted</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span>A <strong>Lead</strong> is a prospective customer. It can be created manually, via <strong>Web-to-Lead</strong>, or from LinkedIn Lead Gen. Once qualified, it is <strong>converted</strong> into an Account, Contact, and optionally an Opportunity.</span></div>
+
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-hd-title">&#128100; Leads &mdash; List View: Working (active filter)</span>
+      <div class="btn-row">
+        <button class="btn btn-p">+ New Lead</button>
+        <button class="btn btn-s">Import</button>
+      </div>
+    </div>
+    <div class="card-body-pad0">
+      <table class="tbl">
+        <thead><tr><th></th><th>Name</th><th>Company</th><th>Email</th><th>Status</th><th>Interest</th><th>Owner</th></tr></thead>
+        <tbody>
+          <tr><td><input type="checkbox"></td><td><a href="#">María López</a></td><td>&mdash;</td><td>m.lopez@email.com</td><td><span class="bdg bdg-warn">Working</span></td><td><span class="tag">Packages</span></td><td>Sales Agent 1</td></tr>
+          <tr><td><input type="checkbox"></td><td><a href="#">Carlos Ruiz</a></td><td>Corp SA</td><td>c.ruiz@corp.com</td><td><span class="bdg bdg-new">New</span></td><td><span class="tag">Hotels</span></td><td>Sales Agent 3</td></tr>
+          <tr><td><input type="checkbox"></td><td><a href="#">Ana García</a></td><td>&mdash;</td><td>a.garcia@mail.com</td><td><span class="bdg bdg-warn">In Contact</span></td><td><span class="tag">Flights</span></td><td>Sales Agent 2</td></tr>
+          <tr><td><input type="checkbox"></td><td><a href="#">Luis Torres</a></td><td>Corp Ltda</td><td>l.torres@corp.com</td><td><span class="bdg bdg-gray">Quote Sent</span></td><td><span class="tag">Packages</span></td><td>Sales Agent 1</td></tr>
+          <tr><td><input type="checkbox"></td><td><a href="#">Pedro Sanz</a></td><td>&mdash;</td><td>p.sanz@web.com</td><td><span class="bdg bdg-new">New</span></td><td><span class="tag">Tours</span></td><td>Queue: General Sales</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="rec-head">
+      <div class="rec-type">Lead</div>
+      <div class="rec-name">María López</div>
+      <div class="rec-meta"><span>&#9679; Working</span><span>Interest: Travel Packages</span><span>Owner: Sales Agent 1</span></div>
+    </div>
+    <div style="padding:12px 14px 0;background:#fff">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:5px;font-weight:600">LEAD PROCESS &mdash; CURRENT STAGE</div>
+      <div class="sf-path">
+        <div class="path-step done">New</div>
+        <div class="path-step done">In Contact</div>
+        <div class="path-step active">Working</div>
+        <div class="path-step">Quote Sent</div>
+        <div class="path-step">Converted</div>
+      </div>
+      <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>The <strong>Lead Path</strong> visually guides the agent. Each stage can display guidance text and up to 5 key fields. It is linked to the <strong>Lead Process</strong> defined in Setup.</span></div>
+    </div>
+    <div class="fields">
+      <div class="f"><div class="f-lbl">Name</div><div class="f-val">María López</div></div>
+      <div class="f"><div class="f-lbl">Email</div><div class="f-val"><a href="#">m.lopez@email.com</a></div></div>
+      <div class="f"><div class="f-lbl">Client Type</div><div class="f-val"><span class="bdg bdg-new">Individual</span></div></div>
+      <div class="f"><div class="f-lbl">Document</div><div class="f-val">ID 32.456.789</div></div>
+      <div class="f"><div class="f-lbl">Main Interest</div><div class="f-val"><span class="tag">Travel Packages</span></div></div>
+      <div class="f"><div class="f-lbl">Phone</div><div class="f-val">+54 9 11 4567-8901</div></div>
+      <div class="f"><div class="f-lbl">Destination Country</div><div class="f-val">Europe</div></div>
+      <div class="f"><div class="f-lbl">Lead Source</div><div class="f-val">Web (Web-to-Lead)</div></div>
+      <div class="f"><div class="f-lbl">Rule Assignment</div><div class="f-val">Packages Rule &rarr; Ag. S1</div></div>
+    </div>
+    <div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;background:#FAFAF9">
+      <button class="btn btn-p">&#10003; Convert Lead</button>
+      <button class="btn btn-s">Log a Call</button>
+      <button class="btn btn-s">New Task</button>
+      <button class="btn btn-n">Find Duplicates</button>
+      <span style="font-size:11px;color:var(--text3);margin-left:auto">Only Sales Agent &amp; Coordinator can convert</span>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#127758; Web-to-Lead Form</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>Setup &rarr; Web-to-Lead generates HTML to embed on a website. Limit: 500 leads/day. Triggers Assignment Rules and Auto-Response Rules automatically.</span></div>
+        <div class="sf-form">
+          <div class="sf-f"><label>First Name <span class="req">*</span></label><input type="text" placeholder="María"></div>
+          <div class="sf-f"><label>Last Name <span class="req">*</span></label><input type="text" placeholder="López"></div>
+          <div class="sf-f"><label>Document <span class="req">*</span></label><input type="text" placeholder="ID / Passport"></div>
+          <div class="sf-f"><label>Email <span class="req">*</span></label><input type="email" placeholder="email@domain.com"></div>
+          <div class="sf-f"><label>Client Type</label><select><option>Individual</option><option>Business</option></select></div>
+          <div class="sf-f"><label>Main Interest</label><select><option>Travel Packages</option><option>Flights</option><option>Hotels</option></select></div>
+        </div>
+        <div style="margin-top:12px;text-align:right"><button class="btn btn-p">Submit</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#9889; Assignment Rules &mdash; Automatic Assignment</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>Only <strong>one active rule</strong> at a time. Each rule has multiple entries. If no criterion matches &rarr; default owner.</span></div>
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Criterion</th><th>Assigns to</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Interest = Packages</td><td>Sales Agent 1</td></tr>
+            <tr><td>2</td><td>Interest = Flights</td><td>Sales Agent 2</td></tr>
+            <tr><td>3</td><td>Interest = Hotels</td><td>Sales Agent 3</td></tr>
+            <tr><td>&mdash;</td><td>Default (no match)</td><td>Coordinator</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">&#10227; Lead Conversion &mdash; Conversion screen</span></div>
+    <div class="card-body">
+      <div class="note" style="margin-bottom:12px"><span class="note-ico">&#128161;</span><span><strong>Lead Conversion</strong>: creates Account + Contact + (optional) Opportunity. Standard fields are mapped automatically; custom fields require manual mapping in Setup &rarr; Lead Fields &rarr; Map Lead Fields.</span></div>
+      <div class="g3">
+        <div class="card" style="border-color:var(--sf-blue)">
+          <div class="card-hd" style="background:var(--sf-light)"><span class="card-hd-title" style="color:var(--sf-blue)">&#127970; Account</span></div>
+          <div class="card-body" style="font-size:12px">
+            <div style="margin-bottom:6px">&#9632; Create new account: <strong>María López</strong></div>
+            <div style="color:var(--text3)">&mdash; Or select existing account &mdash;</div>
+            <select style="width:100%;margin-top:6px;font-size:12px;border:1px solid var(--border);border-radius:var(--r);padding:4px 6px"><option>López, María</option><option>+ Create new</option></select>
+          </div>
+        </div>
+        <div class="card" style="border-color:var(--sf-green)">
+          <div class="card-hd" style="background:var(--sf-green-bg)"><span class="card-hd-title" style="color:var(--sf-green)">&#128100; Contact</span></div>
+          <div class="card-body" style="font-size:12px">
+            <div style="margin-bottom:6px">&#9632; Create new contact: <strong>María López</strong></div>
+            <div style="color:var(--text3)">Mapping: Lead.Name &rarr; Contact.Name</div>
+            <div style="color:var(--text3)">Lead.Email &rarr; Contact.Email</div>
+          </div>
+        </div>
+        <div class="card" style="border-color:var(--sf-orange)">
+          <div class="card-hd" style="background:var(--sf-orange-bg)"><span class="card-hd-title" style="color:var(--sf-orange)">&#128176; Opportunity (optional)</span></div>
+          <div class="card-body" style="font-size:12px">
+            <label style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><input type="checkbox" checked> Create Opportunity</label>
+            <div class="sf-f"><label>Name</label><input type="text" value="María López - Europe Package" style="font-size:12px"></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px">
+        <button class="btn btn-n">Cancel</button>
+        <button class="btn btn-p">Convert</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACCOUNTS -->
+<section id="mod-accounts" class="module">
+  <div class="mod-title">&#127970; Accounts &amp; Contacts</div>
+  <div class="mod-sub">Standard object &middot; Record Types: Individual / Business</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span><strong>Accounts</strong> are the backbone of Salesforce. <strong>Record Types</strong> allow different fields and layouts for Individual vs Business accounts. <strong>Contacts</strong> are always related to an Account.</span></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="rec-head" style="background:#1F4E79">
+        <div class="rec-type">Account &mdash; Individual</div>
+        <div class="rec-name">María López</div>
+        <div class="rec-meta"><span>&#9679; Active</span><span>ID: 001XX0000ABCDE</span></div>
+      </div>
+      <div class="fields">
+        <div class="f"><div class="f-lbl">Name</div><div class="f-val">María López</div></div>
+        <div class="f"><div class="f-lbl">Document (required)</div><div class="f-val">ID 32.456.789</div></div>
+        <div class="f"><div class="f-lbl">Date of Birth</div><div class="f-val">15/03/1985</div></div>
+        <div class="f"><div class="f-lbl">Email</div><div class="f-val"><a href="#">m.lopez@email.com</a></div></div>
+        <div class="f"><div class="f-lbl">Mobile Phone</div><div class="f-val">+54 9 11 4567-8901</div></div>
+        <div class="f"><div class="f-lbl">Cross-Selling</div><div class="f-val"><span class="bdg bdg-warn">Offer Hotel &amp; Tours</span></div></div>
+        <div class="f" style="grid-column:1/-1"><div class="f-lbl">Total Opportunities (Roll-Up)</div><div class="f-val" style="font-size:16px;font-weight:700;color:var(--sf-blue)">USD 3,200</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="rec-head" style="background:#032D60">
+        <div class="rec-type">Account &mdash; Business</div>
+        <div class="rec-name">Corporación Viajera SA</div>
+        <div class="rec-meta"><span>&#9679; Active</span><span>Industry: Technology</span></div>
+      </div>
+      <div class="fields">
+        <div class="f"><div class="f-lbl">Company Name</div><div class="f-val">Corporación Viajera SA</div></div>
+        <div class="f"><div class="f-lbl">Tax ID (required)</div><div class="f-val">30-71234567-9</div></div>
+        <div class="f"><div class="f-lbl">Industry</div><div class="f-val">Technology</div></div>
+        <div class="f"><div class="f-lbl">Website</div><div class="f-val"><a href="#">www.corpviajera.com</a></div></div>
+        <div class="f"><div class="f-lbl">Employees</div><div class="f-val">500</div></div>
+        <div class="f"><div class="f-lbl">Owner</div><div class="f-val">Service Agent Business</div></div>
+        <div class="f" style="grid-column:1/-1"><div class="f-lbl">Total Opportunities (Roll-Up)</div><div class="f-val" style="font-size:16px;font-weight:700;color:var(--sf-blue)">USD 45,600</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="rl-hd">
+      <div class="rl-title">Contacts <span class="rl-cnt">3</span></div>
+      <button class="btn btn-s" style="font-size:12px">+ New Contact</button>
+    </div>
+    <div class="card-body-pad0">
+      <table class="tbl">
+        <thead><tr><th>Name</th><th>Title</th><th>Email</th><th>Phone</th></tr></thead>
+        <tbody>
+          <tr><td><a href="#">Juan Rodríguez</a></td><td>Travel Manager</td><td>j.rodriguez@corp.com</td><td>+54 11 2345-6789</td></tr>
+          <tr><td><a href="#">Laura Martínez</a></td><td>HR Assistant</td><td>l.martinez@corp.com</td><td>+54 11 3456-7890</td></tr>
+          <tr><td><a href="#">Diego Fernández</a></td><td>General Director</td><td>d.fernandez@corp.com</td><td>+54 11 4567-8901</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="rl-hd"><div class="rl-title">Opportunities <span class="rl-cnt">2</span></div><button class="btn btn-s" style="font-size:12px">+ New</button></div>
+      <div class="card-body-pad0">
+        <table class="tbl">
+          <thead><tr><th>Name</th><th>Stage</th><th>Amount</th><th>Close Date</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#">Europe Package Q3</a></td><td><span class="bdg bdg-warn">Proposal</span></td><td>USD 12,000</td><td>09/30/2026</td></tr>
+            <tr><td><a href="#">Asia Tour 2027</a></td><td><span class="bdg bdg-new">Qualification</span></td><td>USD 33,600</td><td>01/15/2027</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="rl-hd"><div class="rl-title">Cases <span class="rl-cnt">1</span></div><button class="btn btn-s" style="font-size:12px">+ New Case</button></div>
+      <div class="card-body-pad0">
+        <table class="tbl">
+          <thead><tr><th>No.</th><th>Subject</th><th>Status</th><th>Priority</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#">00001234</a></td><td>Hotel date change</td><td><span class="bdg bdg-warn">In Progress</span></td><td><span class="bdg bdg-err">High</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OPPORTUNITIES -->
+<section id="mod-opportunities" class="module">
+  <div class="mod-title">&#128176; Opportunities</div>
+  <div class="mod-sub">Standard object &middot; Sales Process &middot; Kanban &middot; Quotes &middot; Automatic Chatter</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span>Opportunities follow a <strong>Sales Process</strong> with customizable stages. Different sales processes can be assigned per <strong>Record Type</strong> (Individual / Business). Revenue can be split among team members with <strong>Opportunity Splits</strong>.</span></div>
+
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">&#9723; Kanban View &mdash; My Opportunities</span></div>
+    <div class="card-body" style="padding:12px">
+      <div class="kanban">
+        <div class="k-col">
+          <div class="k-col-hd">Qualification <span class="k-cnt">2</span></div>
+          <div class="k-card"><div class="k-title">Miami Package</div><div class="k-meta">TechCorp SA &middot; 10/15</div><div class="k-amt">USD 4,500</div></div>
+          <div class="k-card"><div class="k-title">Europe Flights</div><div class="k-meta">Juan García &middot; 10/20</div><div class="k-amt">USD 1,200</div></div>
+        </div>
+        <div class="k-col">
+          <div class="k-col-hd">Proposal <span class="k-cnt">3</span></div>
+          <div class="k-card"><div class="k-title">Europe Package Q3</div><div class="k-meta">Corp Viajera &middot; 09/30</div><div class="k-amt">USD 12,000</div></div>
+          <div class="k-card"><div class="k-title">Hotel + Tour Tokyo</div><div class="k-meta">Ana Ruiz &middot; 10/05</div><div class="k-amt">USD 3,800</div></div>
+          <div class="k-card"><div class="k-title">Corporate Package</div><div class="k-meta">Viajes SA &middot; 10/10</div><div class="k-amt">USD 22,000</div></div>
+        </div>
+        <div class="k-col">
+          <div class="k-col-hd">Negotiation <span class="k-cnt">1</span></div>
+          <div class="k-card"><div class="k-title">Asia Tour 2027</div><div class="k-meta">Corp Viajera &middot; 01/15</div><div class="k-amt">USD 33,600</div></div>
+        </div>
+        <div class="k-col" style="border:1px dashed var(--sf-green)">
+          <div class="k-col-hd" style="color:var(--sf-green)">Closed Won <span class="k-cnt">4</span></div>
+          <div class="k-card" style="border-color:var(--sf-green)"><div class="k-title" style="color:var(--sf-green)">Cancún Package</div><div class="k-meta">María López &middot; 08/01</div><div class="k-amt">USD 5,200</div></div>
+        </div>
+        <div class="k-col" style="opacity:.6">
+          <div class="k-col-hd" style="color:var(--sf-red)">Closed Lost <span class="k-cnt">1</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="rec-head">
+      <div class="rec-type">Opportunity &mdash; Business</div>
+      <div class="rec-name">Europe Package Q3 &mdash; Corp Viajera SA</div>
+      <div class="rec-meta"><span>&#9679; Proposal</span><span>USD 12,000</span><span>Close: 09/30/2026</span></div>
+    </div>
+    <div style="padding:12px 14px 0;background:#fff">
+      <div class="sf-path">
+        <div class="path-step done">Qualification</div>
+        <div class="path-step active">Proposal</div>
+        <div class="path-step">Negotiation</div>
+        <div class="path-step">C. Won</div>
+        <div class="path-step lost">C. Lost</div>
+      </div>
+    </div>
+    <div class="fields">
+      <div class="f"><div class="f-lbl">Account</div><div class="f-val"><a href="#">Corp Viajera SA</a></div></div>
+      <div class="f"><div class="f-lbl">Amount</div><div class="f-val" style="font-weight:700;color:var(--sf-blue)">USD 12,000</div></div>
+      <div class="f"><div class="f-lbl">Close Date</div><div class="f-val">09/30/2026</div></div>
+      <div class="f"><div class="f-lbl">Type</div><div class="f-val"><span class="bdg bdg-purple">Full Package</span></div></div>
+      <div class="f"><div class="f-lbl">Destination Countries</div><div class="f-val"><span class="tag">France</span><span class="tag">Italy</span><span class="tag">Spain</span></div></div>
+      <div class="f"><div class="f-lbl">20% Discount (package)</div><div class="f-val"><span class="bdg bdg-ok">Applied</span></div></div>
+      <div class="f"><div class="f-lbl">Forecast Category</div><div class="f-val">Pipeline</div></div>
+      <div class="f"><div class="f-lbl">Owner</div><div class="f-val">Sales Agent 1</div></div>
+      <div class="f"><div class="f-lbl">Generated Quote</div><div class="f-val"><a href="#">Q-00041 &mdash; View PDF</a></div></div>
+    </div>
+    <div style="padding:10px 14px;border-top:1px solid var(--border);background:#FAFAF9;display:flex;gap:8px">
+      <button class="btn btn-p">New Quote</button>
+      <button class="btn btn-s">Add Product</button>
+      <button class="btn btn-s">Add to Team</button>
+      <span style="font-size:11px;color:var(--sf-green);margin-left:auto;font-weight:500">&#127881; On Closed Won &rarr; Automatic Chatter post (Flow)</span>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="rl-hd"><div class="rl-title">Opportunity Products <span class="rl-cnt">3</span></div></div>
+      <div class="card-body-pad0">
+        <table class="tbl">
+          <thead><tr><th>Product</th><th>List Price</th><th>Qty.</th><th>Discount</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#">Flight BUE-MAD (Airlines)</a></td><td>USD 1,800</td><td>3</td><td>20%</td><td>USD 4,320</td></tr>
+            <tr><td><a href="#">Hotel Gran Via Madrid</a></td><td>USD 150/night</td><td>10</td><td>20%</td><td>USD 3,600</td></tr>
+            <tr><td><a href="#">Imperial Cities Tour</a></td><td>USD 350/pax</td><td>3</td><td>20%</td><td>USD 840</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128203; Quote &mdash; Q-00041</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>A <strong>Quote</strong> is generated from the Opportunity and its products. It can include special discounts and commercial terms. It is the basis for the customer invoice.</span></div>
+        <div class="fields" style="border:1px solid var(--border);border-radius:var(--r)">
+          <div class="f"><div class="f-lbl">Quote Number</div><div class="f-val">Q-00041</div></div>
+          <div class="f"><div class="f-lbl">Status</div><div class="f-val"><span class="bdg bdg-warn">Under Review</span></div></div>
+          <div class="f"><div class="f-lbl">Subtotal</div><div class="f-val">USD 15,000</div></div>
+          <div class="f"><div class="f-lbl">Discount (20%)</div><div class="f-val" style="color:var(--sf-green)">&mdash; USD 3,000</div></div>
+          <div class="f" style="grid-column:1/-1"><div class="f-lbl">Grand Total</div><div class="f-val" style="font-size:16px;font-weight:700;color:var(--sf-dark)">USD 12,000</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="mod-products" class="module">
+  <div class="mod-title">&#128230; Products &amp; Pricing</div>
+  <div class="mod-sub">Standard object Product2 &middot; Standard Pricebook &middot; Custom Pricebooks</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span><strong>Products</strong> are items/services with prices. The <strong>Standard Pricebook</strong> is the master catalog. <strong>Custom Pricebooks</strong> allow differentiated pricing (e.g., corporate rates). The price on an Opportunity is called the <strong>Sales Price</strong>.</span></div>
+
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">&#128230; Product Catalog &mdash; Genie Trips</span><button class="btn btn-p">+ New Product</button></div>
+    <div class="card-body-pad0">
+      <table class="tbl">
+        <thead><tr><th>Name</th><th>Code</th><th>Category</th><th>Standard Price</th><th>Active</th></tr></thead>
+        <tbody>
+          <tr><td><a href="#">Flight BUE-MAD (Aerolíneas Arg.)</a></td><td>VLO-001</td><td><span class="tag">Flights</span></td><td>USD 1,800/pax</td><td><span class="bdg bdg-ok">&#10003;</span></td></tr>
+          <tr><td><a href="#">Flight BUE-MIA (Copa Airlines)</a></td><td>VLO-002</td><td><span class="tag">Flights</span></td><td>USD 950/pax</td><td><span class="bdg bdg-ok">&#10003;</span></td></tr>
+          <tr><td><a href="#">Hotel Gran Via Madrid 4*</a></td><td>HTL-001</td><td><span class="tag">Hotels</span></td><td>USD 150/night</td><td><span class="bdg bdg-ok">&#10003;</span></td></tr>
+          <tr><td><a href="#">Hotel Marriott Cancún 5*</a></td><td>HTL-002</td><td><span class="tag">Hotels</span></td><td>USD 280/night</td><td><span class="bdg bdg-ok">&#10003;</span></td></tr>
+          <tr><td><a href="#">Imperial Cities Tour Spain</a></td><td>TUR-001</td><td><span class="tag">Tours</span></td><td>USD 350/pax</td><td><span class="bdg bdg-ok">&#10003;</span></td></tr>
+          <tr><td><a href="#">Flamenco &amp; Gastronomy Tour</a></td><td>TUR-002</td><td><span class="tag">Tours</span></td><td>USD 180/pax</td><td><span class="bdg bdg-ok">&#10003;</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128218; Price Books</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>The <strong>Standard Pricebook</strong> is unique and mandatory. Custom Pricebooks are used for special prices per segment.</span></div>
+        <table class="tbl">
+          <thead><tr><th>Pricebook</th><th>Type</th><th>Active</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#">Standard Price</a></td><td><span class="bdg bdg-gray">Standard</span></td><td><span class="bdg bdg-ok">&#10003;</span></td></tr>
+            <tr><td><a href="#">Corporate Rates</a></td><td><span class="bdg bdg-new">Custom</span></td><td><span class="bdg bdg-ok">&#10003;</span></td></tr>
+            <tr><td><a href="#">Peak Season</a></td><td><span class="bdg bdg-new">Custom</span></td><td><span class="bdg bdg-ok">&#10003;</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128203; Product Schedules</span></div>
+      <div class="card-body">
+        <div class="note"><span class="note-ico">&#128161;</span><span><strong>Product Schedules</strong>: define payment and delivery cycles. Useful for packages with installments (e.g., 3 monthly payments for a tour). Configured on the product or opportunity line item.</span></div>
+        <div class="fields" style="border:1px solid var(--border);border-radius:var(--r)">
+          <div class="f"><div class="f-lbl">Schedule Type</div><div class="f-val">Quantity + Revenue</div></div>
+          <div class="f"><div class="f-lbl">Installments</div><div class="f-val">3 monthly payments</div></div>
+          <div class="f"><div class="f-lbl">Start Date</div><div class="f-val">07/01/2026</div></div>
+          <div class="f"><div class="f-lbl">Amount per Installment</div><div class="f-val">USD 4,000</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAMPAIGNS -->
+<section id="mod-campaigns" class="module">
+  <div class="mod-title">&#128227; Marketing Campaigns</div>
+  <div class="mod-sub">Standard object &middot; Campaign Members &middot; Hierarchy &middot; Influence</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span><strong>Campaigns</strong> track marketing initiatives. Their members are Leads or Contacts. <strong>Campaign Hierarchy</strong> allows grouping related campaigns and consolidating metrics.</span></div>
+
+  <div class="card">
+    <div class="rec-head" style="background:#1F4E79">
+      <div class="rec-type">Campaign &mdash; Email Marketing</div>
+      <div class="rec-name">Europe Summer Promo 2026</div>
+      <div class="rec-meta"><span>&#9679; In Progress</span><span>Start: 06/01/2026</span><span>End: 06/30/2026</span></div>
+    </div>
+    <div style="padding:12px 14px 0;background:#fff">
+      <div class="sf-path">
+        <div class="path-step done">Planning</div>
+        <div class="path-step done">Design</div>
+        <div class="path-step active">In Progress</div>
+        <div class="path-step">Completed</div>
+        <div class="path-step">Aborted</div>
+      </div>
+    </div>
+    <div class="fields">
+      <div class="f"><div class="f-lbl">Type</div><div class="f-val">Email</div></div>
+      <div class="f"><div class="f-lbl">Status</div><div class="f-val"><span class="bdg bdg-ok">In Progress</span></div></div>
+      <div class="f"><div class="f-lbl">Parent Campaign</div><div class="f-val"><a href="#">Peak Season 2026</a></div></div>
+      <div class="f"><div class="f-lbl">Total Members</div><div class="f-val">1,240</div></div>
+      <div class="f"><div class="f-lbl">Responded</div><div class="f-val" style="color:var(--sf-green);font-weight:600">342 (27.6%)</div></div>
+      <div class="f"><div class="f-lbl">Opportunities Generated</div><div class="f-val">18</div></div>
+      <div class="f"><div class="f-lbl">Expected Revenue</div><div class="f-val">USD 48,200</div></div>
+      <div class="f"><div class="f-lbl">Budget</div><div class="f-val">USD 2,500</div></div>
+      <div class="f"><div class="f-lbl">Actual Cost</div><div class="f-val">USD 1,850</div></div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="rl-hd"><div class="rl-title">Campaign Members <span class="rl-cnt">1,240</span></div><button class="btn btn-s" style="font-size:12px">Import Members</button></div>
+      <div class="card-body-pad0">
+        <table class="tbl">
+          <thead><tr><th>Name</th><th>Type</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#">María López</a></td><td><span class="bdg bdg-gray">Lead</span></td><td><span class="bdg bdg-ok">Responded</span></td></tr>
+            <tr><td><a href="#">Juan Rodríguez</a></td><td><span class="bdg bdg-new">Contact</span></td><td><span class="bdg bdg-gray">Sent</span></td></tr>
+            <tr><td><a href="#">Ana García</a></td><td><span class="bdg bdg-gray">Lead</span></td><td><span class="bdg bdg-warn">Discarded</span></td></tr>
+          </tbody>
+        </table>
+        <div class="note" style="margin:10px"><span class="note-ico">&#128161;</span><span>Default <strong>Member Status</strong>: Sent / Responded. Custom statuses can be added per campaign. "Responded" indicates active engagement.</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128257; Campaign Hierarchy</span></div>
+      <div class="card-body">
+        <div style="padding-left:0">
+          <div style="padding:7px 10px;background:var(--sf-light);border-radius:var(--r);font-weight:600;font-size:13px;color:var(--sf-dark);margin-bottom:6px">&#128227; Peak Season 2026 (Parent)</div>
+          <div style="padding:7px 10px 7px 30px;border-left:2px solid var(--sf-blue);margin-left:10px;margin-bottom:4px;font-size:13px;color:var(--text)">&#9656; Europe Summer Promo 2026</div>
+          <div style="padding:7px 10px 7px 30px;border-left:2px solid var(--sf-blue);margin-left:10px;margin-bottom:4px;font-size:13px;color:var(--text)">&#9656; Caribbean July Promo</div>
+          <div style="padding:7px 10px 7px 30px;border-left:2px solid var(--sf-blue);margin-left:10px;font-size:13px;color:var(--text)">&#9656; Corporate Travel Webinar</div>
+        </div>
+        <div class="note" style="margin-top:10px"><span class="note-ico">&#128161;</span><span>Child campaign metrics roll up to the parent campaign in reports.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CASES -->
+<section id="mod-cases" class="module">
+  <div class="mod-title">&#128083; Cases &mdash; Service Cloud</div>
+  <div class="mod-sub">Standard object &middot; Service Console &middot; Support Process &middot; Case Path</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span><strong>Cases</strong> track support interactions. The <strong>Service Console</strong> allows managing multiple cases in parallel. The <strong>Support Process</strong> defines available statuses per Record Type.</span></div>
+
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">&#128084; Service Console &mdash; Business Service Agent</span></div>
+    <div class="card-body" style="padding:0">
+      <div class="console">
+        <div class="c-tabs">
+          <div class="c-tab active">&#127968; Home</div>
+          <div class="c-tab">&#128218; 00001234 &mdash; Hotel date change</div>
+          <div class="c-tab">&#128218; 00001235 &mdash; Flight refund</div>
+          <div class="c-tab">+ Open case</div>
+        </div>
+        <div class="c-body">
+          <div class="c-list">
+            <div class="c-case active">
+              <div class="c-id">00001234</div>
+              <div class="c-ctitle">Hotel Madrid date change</div>
+              <div><span class="c-status" style="background:#3A3A00;color:#FFD700">In Progress</span></div>
+            </div>
+            <div class="c-case">
+              <div class="c-id">00001235</div>
+              <div class="c-ctitle">Flight refund request</div>
+              <div><span class="c-status" style="background:#001F3F;color:#7FDBFF">New</span></div>
+            </div>
+            <div class="c-case">
+              <div class="c-id">00001230</div>
+              <div class="c-ctitle">Schengen visa inquiry</div>
+              <div><span class="c-status" style="background:#1A3A1A;color:#2ECC40">Waiting Cust.</span></div>
+            </div>
+          </div>
+          <div class="c-detail">
+            <div style="font-size:14px;font-weight:600;color:#FFF;margin-bottom:12px">00001234 &mdash; Hotel Madrid date change</div>
+            <div class="c-flbl">Account</div><div class="c-fval" style="color:#7FDBFF">Corporación Viajera SA</div>
+            <div class="c-flbl">Case Type</div><div class="c-fval">Tour / Hotel Change</div>
+            <div class="c-flbl">Reason</div><div class="c-fval">Hotel</div>
+            <div class="c-flbl">Priority</div><div class="c-fval" style="color:#FF4136">High</div>
+            <div class="c-flbl">Assigned Agent</div><div class="c-fval">Business Service Ag. 1</div>
+            <div style="margin-top:10px;display:flex;gap:8px">
+              <button style="padding:5px 12px;background:#0176D3;color:#fff;border:none;border-radius:4px;font-size:12px;cursor:pointer">Reply Email</button>
+              <button style="padding:5px 12px;background:#2B2B2B;color:#CCC;border:1px solid #555;border-radius:4px;font-size:12px;cursor:pointer">Close Case</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="rec-head" style="background:#0E4FA5">
+      <div class="rec-type">Case &mdash; Business | #00001234</div>
+      <div class="rec-name">Hotel Madrid Date Change &mdash; Corp Viajera SA</div>
+      <div class="rec-meta"><span>&#9679; In Progress</span><span>Priority: High</span><span>Created: 05/20/2026</span></div>
+    </div>
+    <div style="padding:12px 14px 0;background:#fff">
+      <div class="sf-path">
+        <div class="path-step done">New</div>
+        <div class="path-step active">In Progress</div>
+        <div class="path-step">Wait. Cust.</div>
+        <div class="path-step">Under Review</div>
+        <div class="path-step done" style="background:var(--sf-dark)">Closed</div>
+      </div>
+    </div>
+    <div class="fields">
+      <div class="f"><div class="f-lbl">Account</div><div class="f-val"><a href="#">Corp Viajera SA</a></div></div>
+      <div class="f"><div class="f-lbl">Contact</div><div class="f-val"><a href="#">Juan Rodríguez</a></div></div>
+      <div class="f"><div class="f-lbl">Origin</div><div class="f-val">Email (Email-to-Case)</div></div>
+      <div class="f"><div class="f-lbl">Case Type</div><div class="f-val">Tour / Hotel Change</div></div>
+      <div class="f"><div class="f-lbl">Reason</div><div class="f-val">Hotel</div></div>
+      <div class="f"><div class="f-lbl">Priority</div><div class="f-val"><span class="bdg bdg-err">High</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CASE AUTOMATION -->
+<section id="mod-caseautomation" class="module">
+  <div class="mod-title">&#9881; Case Automation</div>
+  <div class="mod-sub">Email-to-Case &middot; Assignment Rules &middot; Escalation Rules &middot; Auto-Response</div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128140; Email-to-Case &mdash; Routing Addresses</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>Once enabled, <strong>Email-to-Case cannot be disabled</strong>. On-Demand: attachments &lt;25 MB, ideal for the cloud. Standard: supports large attachments, requires on-premise agent.</span></div>
+        <table class="tbl">
+          <thead><tr><th>Routing Address</th><th>Record Type</th><th>Default Queue</th></tr></thead>
+          <tbody>
+            <tr><td>support-business@genietrips.com</td><td><span class="bdg bdg-new">Business</span></td><td>Business Agents Queue</td></tr>
+            <tr><td>support@genietrips.com</td><td><span class="bdg bdg-warn">Individual</span></td><td>Individual Agents Queue</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#9889; Case Assignment Rules</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>Only <strong>one active rule</strong>. Each rule has multiple entries evaluated in order. Applied when a case is created (manual, email, web).</span></div>
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Criterion</th><th>Assigns to</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>RecordType = Business</td><td>Business Agents Queue</td></tr>
+            <tr><td>2</td><td>RecordType = Individual</td><td>Individual Agents Queue</td></tr>
+            <tr><td>&mdash;</td><td>Default</td><td>Coordinator</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128680; Escalation Rules</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>One active rule, up to <strong>5 escalation actions</strong> per entry. Actions trigger if the case is not closed after N hours. Available: reassign, email notification.</span></div>
+        <table class="tbl">
+          <thead><tr><th>Criterion</th><th>Hours</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Status = Waiting on Customer</td><td>120 hrs (5 days)</td><td>Close case + Email customer</td></tr>
+            <tr><td>Priority = High, not closed</td><td>24 hrs</td><td>Notify Coordinator</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128231; Auto-Response Rules</span></div>
+      <div class="card-body">
+        <div class="note"><span class="note-ico">&#128161;</span><span>Only one active rule. Sent to the <strong>case contact</strong>. One email per criterion. Useful to confirm receipt and when status changes to "Waiting on Customer".</span></div>
+        <table class="tbl">
+          <thead><tr><th>Criterion</th><th>Template</th></tr></thead>
+          <tbody>
+            <tr><td>Case created by email</td><td>Receipt confirmation</td></tr>
+            <tr><td>Status = Waiting on Customer</td><td>Customer response reminder</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OBJECT MANAGER -->
+<section id="mod-objectmanager" class="module">
+  <div class="mod-title">&#128196; Object Manager</div>
+  <div class="mod-sub">Standard vs. custom objects &middot; Relationship types</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span><strong>Standard Objects</strong> (Account, Contact, Lead, Opportunity, Case, Campaign) cannot be deleted but can be renamed. <strong>Custom Objects</strong> are created for specific business needs. Their API name ends in <strong>__c</strong>.</span></div>
+
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">&#128196; Object Manager &mdash; Genie Trips Org</span></div>
+    <div class="card-body-pad0">
+      <table class="tbl">
+        <thead><tr><th>Label</th><th>API Name</th><th>Type</th><th>Records</th></tr></thead>
+        <tbody>
+          <tr><td><a href="#">Account</a></td><td>Account</td><td><span class="bdg bdg-new">Standard</span></td><td>1,240</td></tr>
+          <tr><td><a href="#">Contact</a></td><td>Contact</td><td><span class="bdg bdg-new">Standard</span></td><td>2,100</td></tr>
+          <tr><td><a href="#">Lead</a></td><td>Lead</td><td><span class="bdg bdg-new">Standard</span></td><td>580</td></tr>
+          <tr><td><a href="#">Opportunity</a></td><td>Opportunity</td><td><span class="bdg bdg-new">Standard</span></td><td>340</td></tr>
+          <tr><td><a href="#">Case</a></td><td>Case</td><td><span class="bdg bdg-new">Standard</span></td><td>890</td></tr>
+          <tr><td><a href="#">Travel Ticket</a></td><td>Ticket__c</td><td><span class="bdg bdg-warn">Custom</span></td><td>720</td></tr>
+          <tr><td><a href="#">Hotel Booking</a></td><td>ReservaHotel__c</td><td><span class="bdg bdg-warn">Custom</span></td><td>430</td></tr>
+          <tr><td><a href="#">Tour Booking</a></td><td>ReservaTour__c</td><td><span class="bdg bdg-warn">Custom</span></td><td>290</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sec-div">Relationship Types</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128279; Lookup vs. Master-Detail</span></div>
+      <div class="card-body">
+        <table class="diff-table">
+          <thead><tr><th>Feature</th><th>Lookup</th><th>Master-Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Coupling</td><td>Loose</td><td>Tight</td></tr>
+            <tr><td>Roll-Up Summary</td><td class="no">&#10007;</td><td class="yes">&#10003;</td></tr>
+            <tr><td>Parent required</td><td class="no">No</td><td class="yes">Yes</td></tr>
+            <tr><td>Cascade Delete</td><td class="no">&#10007;</td><td class="yes">&#10003;</td></tr>
+            <tr><td>Max per object</td><td>40</td><td>2</td></tr>
+            <tr><td>Owner controlled by parent</td><td class="no">No</td><td class="yes">Yes</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128279; Data Model &mdash; Genie Trips</span></div>
+      <div class="card-body">
+        <div style="text-align:center;padding:8px 0">
+          <div style="display:flex;justify-content:center;gap:16px;margin-bottom:6px">
+            <div class="rel-box" style="flex:1">Lead</div>
+            <div style="display:flex;align-items:center;font-size:20px;color:var(--sf-blue)">&#8594;</div>
+            <div class="rel-box" style="flex:1">Account / Contact</div>
+          </div>
+          <div class="rel-arr">&#8595;</div>
+          <div class="rel-box master">Opportunity</div>
+          <div style="display:flex;justify-content:center;gap:4px;margin-top:4px">
+            <div class="rel-arr">&#8595;</div>
+            <div class="rel-arr" style="margin:0 20px">&#8595;</div>
+            <div class="rel-arr">&#8595;</div>
+          </div>
+          <div style="display:flex;justify-content:center;gap:6px">
+            <div class="rel-box" style="flex:1;font-size:11px">Ticket__c<br><span style="font-weight:400;color:var(--text3)">Lookup</span></div>
+            <div class="rel-box" style="flex:1;font-size:11px">ReservaHotel__c<br><span style="font-weight:400;color:var(--text3)">Lookup</span></div>
+            <div class="rel-box" style="flex:1;font-size:11px">ReservaTour__c<br><span style="font-weight:400;color:var(--text3)">Lookup</span></div>
+          </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text3)">All 3 custom objects relate to Opportunity via Lookup</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FIELDS -->
+<section id="mod-fields" class="module">
+  <div class="mod-title">&#128279; Fields &amp; Relationships</div>
+  <div class="mod-sub">Field types &middot; Roll-Up Summary &middot; Formula Fields &middot; Field-Level Security</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span><strong>Standard fields</strong> do not have <code>__c</code> in the API name. <strong>Custom fields</strong> do. Standard fields cannot be deleted but can be renamed. Field-Level Security (<strong>FLS</strong>) is best managed with Permission Sets.</span></div>
+
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">&#128279; Fields &amp; Relationships &mdash; Ticket__c</span><button class="btn btn-p">+ New Field</button></div>
+    <div class="card-body-pad0">
+      <table class="tbl">
+        <thead><tr><th>Label</th><th>API Name</th><th>Type</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Ticket Name</td><td>Name</td><td><span class="bdg bdg-new">Auto Number</span></td><td>Standard field</td></tr>
+          <tr><td>Opportunity</td><td>Opportunity__c</td><td><span class="bdg bdg-err">Lookup</span></td><td>Relationship with Opportunity</td></tr>
+          <tr><td>Passenger Name</td><td>Nombre_Pasajero__c</td><td><span class="bdg bdg-gray">Text(80)</span></td><td>Required</td></tr>
+          <tr><td>Date of Birth</td><td>Fecha_Nacimiento__c</td><td><span class="bdg bdg-gray">Date</span></td><td></td></tr>
+          <tr><td>Age</td><td>Edad__c</td><td><span class="bdg bdg-purple">Formula (Number)</span></td><td>FLOOR((TODAY()-Fecha_Nacimiento__c)/365)</td></tr>
+          <tr><td>Trip Type</td><td>Tipo_Viaje__c</td><td><span class="bdg bdg-gray">Picklist</span></td><td>One-way / Round trip</td></tr>
+          <tr><td>Return Date</td><td>Fecha_Regreso__c</td><td><span class="bdg bdg-gray">Date</span></td><td>Required if Type = Round trip</td></tr>
+          <tr><td>Visa Required</td><td>Necesita_Visa__c</td><td><span class="bdg bdg-gray">Checkbox</span></td><td></td></tr>
+          <tr><td>Passport No.</td><td>Pasaporte__c</td><td><span class="bdg bdg-gray">Text(20)</span></td><td>Required if Necesita_Visa__c = true</td></tr>
+          <tr><td>Number of Legs</td><td>Cantidad_Tramos__c</td><td><span class="bdg bdg-gray">Number</span></td><td></td></tr>
+          <tr><td>Client Type</td><td>Tipo_Cliente__c</td><td><span class="bdg bdg-purple">Formula (Text)</span></td><td>Opportunity__r.Account.RecordType.Name</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#8721; Roll-Up Summary Fields</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span><strong>Master-Detail relationships only.</strong> Created on the parent object. Operations: COUNT, SUM, MIN, MAX. Max 25 per object. Read-only.</span></div>
+        <table class="tbl">
+          <thead><tr><th>Parent Field</th><th>Operation</th><th>Child Object</th><th>Field</th></tr></thead>
+          <tbody>
+            <tr><td>Total Tickets</td><td><span class="bdg bdg-purple">COUNT</span></td><td>Ticket__c</td><td>(records)</td></tr>
+            <tr><td>Total Nights</td><td><span class="bdg bdg-purple">SUM</span></td><td>ReservaHotel__c</td><td>Dias__c</td></tr>
+            <tr><td>Tour Guests</td><td><span class="bdg bdg-purple">SUM</span></td><td>ReservaTour__c</td><td>Cantidad_Pax__c</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128279; Field-Level Security (FLS)</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>FLS controls which fields each profile can <strong>view and edit</strong>. <strong>Visible</strong> = editable. <strong>Read-Only</strong> = view only. Unchecked = hidden. Best practice: manage via <strong>Permission Sets</strong>.</span></div>
+        <table class="tbl">
+          <thead><tr><th>Field</th><th>Sales Agent</th><th>Service Agent</th><th>Finance</th></tr></thead>
+          <tbody>
+            <tr><td>Opportunity Amount</td><td class="yes">&#10003; Edit</td><td class="no">R/O</td><td class="yes">&#10003; Edit</td></tr>
+            <tr><td>Passport No.</td><td class="yes">&#10003; Edit</td><td class="no">Hidden</td><td class="no">Hidden</td></tr>
+            <tr><td>Cross Selling</td><td class="no">R/O</td><td class="yes">&#10003; Edit</td><td class="no">R/O</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE LAYOUTS -->
+<section id="mod-pagelayouts" class="module">
+  <div class="mod-title">&#128451; Page Layouts, Record Types &amp; Paths</div>
+  <div class="mod-sub">Page Layout &middot; Compact Layout &middot; Record Types &middot; Business Processes &middot; Path</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span><strong>Page Layouts</strong> control the fields, sections, buttons, and related lists on a record. <strong>Record Types</strong> control which layout each profile sees and what picklist values are available. They are complementary, not equivalent.</span></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128451; Page Layout &mdash; Account (Business)</span></div>
+      <div class="card-body" style="font-size:12px">
+        <div style="border:2px dashed var(--sf-blue);border-radius:var(--r);padding:8px;margin-bottom:8px">
+          <div style="font-weight:600;color:var(--sf-blue);margin-bottom:6px">&#9607; Section: Main Information</div>
+          <div class="g2" style="gap:6px">
+            <div style="background:#F3F2F2;padding:5px 8px;border-radius:var(--r)">Company Name *</div>
+            <div style="background:#F3F2F2;padding:5px 8px;border-radius:var(--r)">Tax ID *</div>
+            <div style="background:#F3F2F2;padding:5px 8px;border-radius:var(--r)">Industry</div>
+            <div style="background:#F3F2F2;padding:5px 8px;border-radius:var(--r)">Website</div>
+          </div>
+        </div>
+        <div style="border:2px dashed var(--sf-green);border-radius:var(--r);padding:8px;margin-bottom:8px">
+          <div style="font-weight:600;color:var(--sf-green);margin-bottom:6px">&#9607; Section: Contact Information</div>
+          <div class="g2" style="gap:6px">
+            <div style="background:#F3F2F2;padding:5px 8px;border-radius:var(--r)">Phone</div>
+            <div style="background:#F3F2F2;padding:5px 8px;border-radius:var(--r)">Email</div>
+          </div>
+        </div>
+                  <div class="g2" style="gap:6px">
+            <div style="background:#F3F2F2;padding:5px 8px;border-radius:var(--r)">Cross Selling (R/O)</div>
+            <div style="background:#F3F2F2;padding:5px 8px;border-radius:var(--r)">Total Opps (Roll-Up)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128204; Record Types &mdash; Opportunity</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>For Opportunity, Lead and Case, the Record Type is linked to a <strong>Business Process</strong>. Each process defines which stage/status values are available.</span></div>
+        <table class="tbl">
+          <thead><tr><th>Record Type</th><th>Business Process</th><th>Assigned to</th></tr></thead>
+          <tbody>
+            <tr><td>Individual</td><td>Individual Sales</td><td>Sales Agents, Coordinator</td></tr>
+            <tr><td>Business</td><td>Business Sales</td><td>Sales Agents, Coordinator</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:12px">
+          <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:6px">Stages per process</div>
+          <div class="g2" style="gap:6px;font-size:11px">
+            <div>
+              <div style="font-weight:600;color:var(--sf-blue);margin-bottom:4px">Individual Sales</div>
+              <div class="tag">Qualification</div><div class="tag">Proposal</div><div class="tag">Negotiation</div><div class="tag">C. Won</div><div class="tag">C. Lost</div>
+            </div>
+            <div>
+              <div style="font-weight:600;color:var(--sf-dark);margin-bottom:4px">Business Sales</div>
+              <div class="tag">Qualification</div><div class="tag">Needs Analysis</div><div class="tag">Proposal</div><div class="tag">Negotiation</div><div class="tag">Internal Approval</div><div class="tag">C. Won</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mod-users" class="module">
+  <div class="mod-title">&#128101; Users &amp; Licenses</div>
+  <div class="mod-sub">User Creation &middot; License types &middot; Authentication (SSO / MFA)</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span>Every user needs: last name, alias, email, <strong>unique username (email format)</strong>, license, and profile. The <strong>role</strong> appears required but is not strictly needed to create a user. Only the System Admin can have no role.</span></div>
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">&#128101; User Management</span><button class="btn btn-p">+ New User</button></div>
+    <div class="card-body-pad0">
+      <table class="tbl">
+        <thead><tr><th>Name</th><th>Username</th><th>Profile</th><th>Role</th><th>License</th><th>Active</th></tr></thead>
+        <tbody>
+          <tr><td>Admin Genie</td><td>admin@genietrips.sf</td><td><span class="bdg bdg-err">Sys Administrator</span></td><td>CEO</td><td>Salesforce</td><td><span class="bdg bdg-ok">&#10003;</span></td></tr>
+          <tr><td>Sales Agent 1</td><td>av1@genietrips.sf</td><td><span class="bdg bdg-new">Sales Agent</span></td><td>Sales Agent &ndash; Packages</td><td>Salesforce</td><td><span class="bdg bdg-ok">&#10003;</span></td></tr>
+          <tr><td>Service Agent B</td><td>ase@genietrips.sf</td><td><span class="bdg bdg-warn">Service Agent</span></td><td>Business Service Agent</td><td>Salesforce</td><td><span class="bdg bdg-ok">&#10003;</span></td></tr>
+          <tr><td>Community Manager</td><td>cm@genietrips.sf</td><td><span class="bdg bdg-purple">Marketing User</span></td><td>Community Manager</td><td>Salesforce</td><td><span class="bdg bdg-ok">&#10003;</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128220; License Types</span></div>
+      <div class="card-body">
+        <table class="tbl">
+          <thead><tr><th>Type</th><th>Examples</th><th>Scope</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bdg bdg-new">User License</span></td><td>Salesforce, Chatter Free</td><td>Base access to the org</td></tr>
+            <tr><td><span class="bdg bdg-warn">Feature License</span></td><td>Marketing User, Knowledge</td><td>Additional features</td></tr>
+            <tr><td><span class="bdg bdg-purple">Permission Set License</span></td><td>CPQ, Pardot, Service</td><td>Graduated access to purchased features</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128272; Authentication</span></div>
+      <div class="card-body">
+        <div class="hl" style="margin-bottom:8px"><strong>SSO (Single Sign-On):</strong> SAML or delegated. Unifies login with existing company systems.</div>
+        <div class="hl"><strong>MFA (Multi-Factor Auth):</strong> Mandatory second factor. Salesforce Authenticator app or U2F key. Increases security on every login.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mod-profiles" class="module">
+  <div class="mod-title">&#128274; Profiles &amp; Permission Sets</div>
+  <div class="mod-sub">Standard Profiles &middot; Custom Profiles &middot; Permission Sets &middot; FLS</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span><strong>Profiles &rarr; structure</strong> (which objects, fields, apps). <strong>Roles &rarr; data</strong> (which records). <strong>Permission Sets</strong> only add permissions, never remove them. A user can have multiple Permission Sets.</span></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128274; Salesforce Standard Profiles</span></div>
+      <div class="card-body">
+        <table class="tbl">
+          <thead><tr><th>Profile</th><th>Short description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bdg bdg-err">System Administrator</span></td><td>Full access, configures the org</td></tr>
+            <tr><td><span class="bdg bdg-new">Standard User</span></td><td>CRUD on most objects, runs reports</td></tr>
+            <tr><td><span class="bdg bdg-warn">Marketing User</span></td><td>Standard + campaign management &amp; lead import</td></tr>
+            <tr><td><span class="bdg bdg-gray">Minimum Access</span></td><td>Minimum privileges &mdash; base for custom profiles</td></tr>
+            <tr><td><span class="bdg bdg-gray">Contract Manager</span></td><td>Standard + contract management</td></tr>
+          </tbody>
+        </table>
+        <div class="note" style="margin-top:10px"><span class="note-ico">&#128161;</span><span>Standard profiles <strong>cannot be edited</strong>, but can be cloned. The clone becomes a custom profile.</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#9651; Profiles vs. Permission Sets</span></div>
+      <div class="card-body">
+        <table class="diff-table">
+          <thead><tr><th>Setting</th><th>Profile</th><th>Perm. Set</th></tr></thead>
+          <tbody>
+            <tr><td>Default record type</td><td class="yes">&#10003;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Default app</td><td class="yes">&#10003;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Login Hours / IP</td><td class="yes">&#10003;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Page Layout Assignment</td><td class="yes">&#10003;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Can add permissions</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+            <tr><td>Assignable to multiple users</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+            <tr><td>User can have multiple</td><td class="no">1 only</td><td class="yes">Multiple</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mod-security" class="module">
+  <div class="mod-title">&#128272; Security &amp; Roles</div>
+  <div class="mod-sub">Role Hierarchy &middot; OWD &middot; Sharing Rules &middot; Manual Sharing</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span>Salesforce security works in layers: <strong>OWD</strong> &rarr; <strong>Role Hierarchy</strong> &rarr; <strong>Sharing Rules</strong> &rarr; <strong>Manual Sharing</strong>. Layers can only <em>open</em> access, never close it.</span></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128262; Role Hierarchy &mdash; Genie Trips</span></div>
+      <div class="card-body">
+        <div style="font-size:12px">
+          <div style="padding:6px 10px;background:var(--sf-dark);color:#fff;border-radius:var(--r);margin-bottom:6px;font-weight:600">CEO</div>
+          <div style="padding-left:20px;border-left:2px solid var(--sf-blue)">
+            <div style="padding:5px 10px;background:var(--sf-mid);color:#fff;border-radius:var(--r);margin-bottom:6px;font-weight:500">Agency Manager <span style="font-size:10px;opacity:.8">(sees all accounts)</span></div>
+            <div style="padding-left:20px;border-left:2px solid var(--sf-blue)">
+              <div style="padding:5px 10px;background:var(--sf-blue);color:#fff;border-radius:var(--r);margin-bottom:6px;font-weight:500">Coordinator <span style="font-size:10px;opacity:.8">(can convert leads)</span></div>
+              <div style="padding-left:20px;border-left:2px solid var(--border)">
+                <div style="padding:4px 8px;background:var(--sf-light);border:1px solid var(--sf-blue);border-radius:var(--r);margin-bottom:4px;color:var(--sf-dark)">Sales Agent &ndash; Packages</div>
+                <div style="padding:4px 8px;background:var(--sf-light);border:1px solid var(--sf-blue);border-radius:var(--r);margin-bottom:4px;color:var(--sf-dark)">Sales Agent &ndash; Flights</div>
+                <div style="padding:4px 8px;background:var(--sf-light);border:1px solid var(--sf-blue);border-radius:var(--r);margin-bottom:4px;color:var(--sf-dark)">Sales Agent &ndash; Hotels</div>
+                <div style="padding:4px 8px;background:#F0FFF0;border:1px solid var(--sf-green);border-radius:var(--r);margin-bottom:4px;color:var(--sf-green)">Service Agent Business</div>
+                <div style="padding:4px 8px;background:#F0FFF0;border:1px solid var(--sf-green);border-radius:var(--r);color:var(--sf-green)">Service Agent Individual</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding-left:20px;border-left:2px solid var(--border);margin-top:6px">
+            <div style="padding:5px 10px;background:#F3F2F2;border-radius:var(--r);margin-bottom:4px">Finance Manager &rarr; Accountant</div>
+            <div style="padding:5px 10px;background:#F3F2F2;border-radius:var(--r)">Marketing Manager &rarr; Community Manager</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128272; OWD (Org-Wide Defaults)</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>The OWD sets the most <strong>restrictive</strong> possible access level. <strong>Private</strong> = only the owner (and hierarchy).</span></div>
+        <div style="font-size:12px">
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-weight:500">Account</span><span class="bdg bdg-err">Private</span></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-weight:500">Contact</span><span class="bdg bdg-err">Private</span></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-weight:500">Opportunity</span><span class="bdg bdg-err">Private</span></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-weight:500">Lead</span><span class="bdg bdg-err">Private</span></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0"><span style="font-weight:500">Case</span><span class="bdg bdg-err">Private</span></div>
+        </div>
+        <div class="hl" style="margin-top:12px">The <strong>Role Hierarchy</strong> automatically gives upward visibility: the Coordinator sees accounts of all subordinates.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mod-datamanagement" class="module">
+  <div class="mod-title">&#128190; Data Management</div>
+  <div class="mod-sub">Data Import Wizard &middot; Data Loader &middot; Mass Transfer &middot; Mass Delete</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span>During any load operation, <strong>Validation Rules, Flows, Workflow Rules, and Triggers run</strong>. Always test in Sandbox before production.</span></div>
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">&#128190; Data Import Wizard &mdash; Loading 50 Test Leads</span></div>
+    <div class="card-body">
+      <div class="wiz">
+        <div class="wiz-step done"><div class="wiz-n">1</div><div class="wiz-l">Select file</div></div>
+        <div class="wiz-step active"><div class="wiz-n">2</div><div class="wiz-l">Map fields</div></div>
+        <div class="wiz-step"><div class="wiz-n">3</div><div class="wiz-l">Run import</div></div>
+      </div>
+      <div style="background:#F3F2F2;border-radius:var(--r);padding:12px;font-size:12px">
+        <div style="font-weight:600;margin-bottom:8px">Field Mapping &mdash; test_leads.csv</div>
+        <table class="tbl" style="font-size:12px">
+          <thead><tr><th>CSV Column</th><th>Salesforce Field</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>first_name</td><td>First Name</td><td><span class="bdg bdg-ok">&#10003; Mapped</span></td></tr>
+            <tr><td>last_name</td><td>Last Name</td><td><span class="bdg bdg-ok">&#10003; Mapped</span></td></tr>
+            <tr><td>email</td><td>Email</td><td><span class="bdg bdg-ok">&#10003; Mapped</span></td></tr>
+            <tr><td>document</td><td>DocumentNumber__c</td><td><span class="bdg bdg-ok">&#10003; Mapped</span></td></tr>
+            <tr><td>client_type</td><td>ClientType__c</td><td><span class="bdg bdg-ok">&#10003; Mapped</span></td></tr>
+            <tr><td>interest</td><td>InterestType__c</td><td><span class="bdg bdg-ok">&#10003; Mapped</span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:10px;font-size:11px;color:var(--text3)">50 rows detected &middot; Limit: 50,000 &middot; Duplicates: check by Email</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">&#9864; Import Wizard vs. Data Loader</span></div>
+    <div class="card-body">
+      <table class="diff-table">
+        <thead><tr><th>Feature</th><th>Import Wizard</th><th>Data Loader</th></tr></thead>
+        <tbody>
+          <tr><td>Interface</td><td>Web (Setup)</td><td>Installable client</td></tr>
+          <tr><td>Max volume</td><td>50,000 records</td><td>5,000,000 records</td></tr>
+          <tr><td>Insert</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+          <tr><td>Update</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+          <tr><td>Upsert</td><td>Limited</td><td class="yes">&#10003; (with External ID)</td></tr>
+          <tr><td>Delete</td><td class="no">&#10007;</td><td class="yes">&#10003;</td></tr>
+          <tr><td>Hard Delete</td><td class="no">&#10007;</td><td class="yes">&#10003; (no Recycle Bin)</td></tr>
+          <tr><td>Export</td><td class="no">&#10007;</td><td class="yes">&#10003;</td></tr>
+          <tr><td>CLI/Batch Automation</td><td class="no">&#10007;</td><td class="yes">&#10003;</td></tr>
+          <tr><td>Best for</td><td>Simple / functional loads</td><td>Large volumes / migrations</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#8644; Data Operations</span></div>
+      <div class="card-body">
+        <table class="tbl" style="font-size:12px">
+          <thead><tr><th>Operation</th><th>If exists</th><th>If not exists</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bdg bdg-new">Insert</span></td><td>Error / duplicate</td><td>Creates</td></tr>
+            <tr><td><span class="bdg bdg-warn">Update</span></td><td>Updates</td><td>Fails</td></tr>
+            <tr><td><span class="bdg bdg-ok">Upsert</span></td><td>Updates</td><td>Creates</td></tr>
+            <tr><td><span class="bdg bdg-err">Delete</span></td><td>&rarr; Recycle Bin</td><td>Fails</td></tr>
+            <tr><td><span class="bdg bdg-err">Hard Delete</span></td><td>Permanently deleted</td><td>Fails</td></tr>
+            <tr><td><span class="bdg bdg-purple">Export</span></td><td>Extracts to CSV</td><td>&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128203; External ID vs. Record ID</span></div>
+      <div class="card-body">
+        <div class="hl" style="margin-bottom:8px"><strong>Record ID</strong>: generated by Salesforce, 15 or 18 characters. The 18-char version is case-insensitive and recommended. Never changes.</div>
+        <div class="hl"><strong>External ID</strong>: field marked as an external identifier (Text/Number/Email). Used in Upsert to avoid duplicates. Max 25 per object.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mod-reports" class="module">
+  <div class="mod-title">&#128202; Reports &amp; Dashboards</div>
+  <div class="mod-sub">Report Builder &middot; Dashboard &middot; Forecast Categories</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span>Salesforce has 4 report types: <strong>Tabular</strong> (list), <strong>Summary</strong> (grouped with totals), <strong>Matrix</strong> (cross rows and columns), <strong>Joined</strong> (multiple objects). Dashboards use reports as data sources.</span></div>
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">&#128202; Dashboard &mdash; Sales Management</span></div>
+    <div class="card-body">
+      <div class="g3" style="margin-bottom:14px">
+        <div style="background:var(--sf-light);border:1px solid rgba(1,118,211,.3);border-radius:var(--r);padding:14px;text-align:center">
+          <div style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Leads in Pipeline</div>
+          <div style="font-size:36px;font-weight:700;color:var(--sf-blue);margin:6px 0">47</div>
+          <div style="font-size:11px;color:var(--text3)">Excludes Converted / Unqualified</div>
+        </div>
+        <div style="background:var(--sf-green-bg);border:1px solid rgba(46,132,74,.3);border-radius:var(--r);padding:14px;text-align:center">
+          <div style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Closed Won Opps (Month)</div>
+          <div style="font-size:36px;font-weight:700;color:var(--sf-green);margin:6px 0">USD 48k</div>
+          <div style="font-size:11px;color:var(--text3)">12 closed opportunities</div>
+        </div>
+        <div style="background:var(--sf-orange-bg);border:1px solid rgba(224,116,0,.3);border-radius:var(--r);padding:14px;text-align:center">
+          <div style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Open Cases</div>
+          <div style="font-size:36px;font-weight:700;color:var(--sf-orange);margin:6px 0">23</div>
+          <div style="font-size:11px;color:var(--text3)">3 with High priority</div>
+        </div>
+      </div>
+      <div class="g2">
+        <div style="background:#F9F9F8;border:1px solid var(--border);border-radius:var(--r);padding:12px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:10px;color:var(--text3);text-transform:uppercase">Opportunity Pipeline Funnel</div>
+          <div>
+            <div style="background:var(--sf-blue);height:22px;border-radius:2px;width:100%;margin-bottom:4px;display:flex;align-items:center;padding:0 8px;font-size:11px;color:#fff;font-weight:600">Qualification &mdash; 24</div>
+            <div style="background:#1F7ABA;height:22px;border-radius:2px;width:75%;margin-bottom:4px;display:flex;align-items:center;padding:0 8px;font-size:11px;color:#fff;font-weight:600">Proposal &mdash; 18</div>
+            <div style="background:#1A64A0;height:22px;border-radius:2px;width:50%;margin-bottom:4px;display:flex;align-items:center;padding:0 8px;font-size:11px;color:#fff;font-weight:600">Negotiation &mdash; 12</div>
+            <div style="background:var(--sf-green);height:22px;border-radius:2px;width:25%;margin-bottom:4px;display:flex;align-items:center;padding:0 8px;font-size:11px;color:#fff;font-weight:600">C. Won &mdash; 6</div>
+          </div>
+        </div>
+        <div style="background:#F9F9F8;border:1px solid var(--border);border-radius:var(--r);padding:12px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:10px;color:var(--text3);text-transform:uppercase">Sales by Type (Pie Chart)</div>
+          <div style="display:flex;justify-content:center;align-items:center;gap:20px">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="45" fill="#E3F2FD" stroke="white" stroke-width="2"/>
+              <path d="M60 60 L60 15 A45 45 0 0 1 103 82 Z" fill="#0176D3" stroke="white" stroke-width="2"/>
+              <path d="M60 60 L103 82 A45 45 0 0 1 20 82 Z" fill="#2E844A" stroke="white" stroke-width="2"/>
+              <path d="M60 60 L20 82 A45 45 0 0 1 60 15 Z" fill="#E07400" stroke="white" stroke-width="2"/>
+            </svg>
+            <div style="font-size:11px">
+              <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px"><div style="width:10px;height:10px;border-radius:50%;background:#0176D3;flex-shrink:0"></div>Packages 45%</div>
+              <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px"><div style="width:10px;height:10px;border-radius:50%;background:#2E844A;flex-shrink:0"></div>Hotels 32%</div>
+              <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:#E07400;flex-shrink:0"></div>Flights 23%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mod-activities" class="module">
+  <div class="mod-title">&#128197; Activities &mdash; Tasks &amp; Events</div>
+  <div class="mod-sub">Activity Timeline &middot; Tasks &middot; Events &middot; Calendars &middot; Shared Activities</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span><strong>Tasks</strong>: pending items, optionally with a due date. <strong>Events</strong>: calendar activities with duration. The <strong>Activity Timeline</strong> shows upcoming steps, open tasks, and past activity history in one place.</span></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128197; Activity Timeline &mdash; Lead: María López</span></div>
+      <div class="card-body">
+        <div style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:8px">Next Steps</div>
+        <div class="tl-item"><div class="tl-ico">&#128222;</div><div class="tl-body"><div class="tl-title">Follow-up Call</div><div class="tl-meta">Today, 3:00 PM &middot; Sales Ag. 1 &middot; <span class="bdg bdg-warn">Pending</span></div></div></div>
+        <div class="tl-item"><div class="tl-ico">&#128231;</div><div class="tl-body"><div class="tl-title">Send Europe Proposal</div><div class="tl-meta">Due: 05/25/2026 &middot; <span class="bdg bdg-warn">Open</span></div></div></div>
+        <div style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;margin:12px 0 8px">Activity History</div>
+        <div class="tl-item"><div class="tl-ico">&#128231;</div><div class="tl-body"><div class="tl-title">Email: We received your inquiry</div><div class="tl-meta">05/15/2026 &middot; Auto-response Web-to-Lead</div></div></div>
+        <div class="tl-item" style="border:none"><div class="tl-ico">&#128222;</div><div class="tl-body"><div class="tl-title">First phone contact</div><div class="tl-meta">05/18/2026 &middot; Sales Ag. 1 &middot; Duration: 12 min</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128197; New Task</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span><strong>Group Tasks</strong>: assigned to multiple users &mdash; Salesforce creates one copy per user. <strong>Shared Activities</strong>: up to 50 contacts per activity (one is the Primary Contact).</span></div>
+        <div class="sf-form">
+          <div class="sf-f" style="grid-column:1/-1"><label>Subject <span class="req">*</span></label><input type="text" value="Send Europe 2026 Proposal"></div>
+          <div class="sf-f"><label>Due Date</label><input type="date" value="2026-05-25"></div>
+          <div class="sf-f"><label>Status</label><select><option>Not Started</option><option>In Progress</option><option>Completed</option></select></div>
+          <div class="sf-f"><label>Priority</label><select><option>High</option><option>Normal</option><option>Low</option></select></div>
+          <div class="sf-f"><label>Assigned To</label><input type="text" value="Sales Agent 1"></div>
+          <div class="sf-f" style="grid-column:1/-1"><label>Description</label><textarea>Prepare quote with flights + hotel + tours for the Europe circuit.</textarea></div>
+        </div>
+        <div style="margin-top:10px;display:flex;justify-content:flex-end;gap:8px">
+          <button class="btn btn-n">Cancel</button>
+          <button class="btn btn-p">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mod-chatter" class="module">
+  <div class="mod-title">&#128172; Chatter &mdash; Collaboration</div>
+  <div class="mod-sub">Posts &middot; Groups &middot; Feed Tracking &middot; Topics &middot; Licenses</div>
+  <div class="note"><span class="note-ico">&#128161;</span><span><strong>Chatter</strong> enables real-time collaboration. <strong>Feed Tracking</strong> can be enabled for objects and up to 20 fields per object. <strong>Topics</strong> work like hashtags to organize information.</span></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128172; Feed &mdash; Opportunity: Europe Package Q3</span></div>
+      <div class="card-body">
+        <div class="ch-post" style="border-color:var(--sf-green)">
+          <div class="ch-hd"><div class="avatar" style="background:var(--sf-green);flex-shrink:0">SF</div><div><div class="ch-user" style="color:var(--sf-green)">&#9889; Salesforce (Automatic Flow)</div><div class="ch-time">Today, 2:23 PM</div></div></div>
+          <div class="ch-body">&#127881; Congratulations <strong>@Sales Agent 1</strong>! You closed the opportunity <strong>Europe Package Q3</strong> for <strong>USD 12,000</strong>. The whole team celebrates! &#127881;</div>
+          <div class="ch-like">&#128077; 5 Likes &middot; &#128172; 2 Comments</div>
+        </div>
+        <div class="ch-post">
+          <div class="ch-hd"><div class="avatar" style="flex-shrink:0">SA</div><div><div class="ch-user">Sales Agent 1</div><div class="ch-time">Yesterday, 10:45 AM</div></div></div>
+          <div class="ch-body"><strong>@Coordinator</strong> I need help with the Schengen visa documentation. Does anyone have the updated checklist? #visa #europe</div>
+          <div class="ch-like">&#128077; 2 Likes &middot; &#128172; 1 Comment</div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:var(--r);padding:10px;background:#FAFAF9">
+          <textarea style="width:100%;border:none;resize:none;font-size:13px;color:var(--text);background:transparent;outline:none;height:50px" placeholder="Write a post... @mention someone, #topic"></textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+            <div style="font-size:12px;color:var(--text3)">&#128206; Attach &nbsp;&nbsp; &#128247; Photo</div>
+            <button class="btn btn-p" style="font-size:12px">Post</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128101; Chatter Groups</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span><strong>Public</strong> groups (anyone can see), <strong>private</strong> (members only), and <strong>unlisted</strong> (invite only, hidden from searches).</span></div>
+        <table class="tbl">
+          <thead><tr><th>Group</th><th>Type</th><th>Members</th></tr></thead>
+          <tbody>
+            <tr><td>&#128101; Sales Team</td><td><span class="bdg bdg-ok">Public</span></td><td>8</td></tr>
+            <tr><td>&#128084; Customer Service</td><td><span class="bdg bdg-ok">Public</span></td><td>5</td></tr>
+            <tr><td>&#128272; Management Strategy</td><td><span class="bdg bdg-warn">Private</span></td><td>4</td></tr>
+            <tr><td>&#128101; Europe 2026 Project</td><td><span class="bdg bdg-gray">Unlisted</span></td><td>3</td></tr>
+          </tbody>
+        </table>
+        <div class="note" style="margin-top:10px"><span class="note-ico">&#128161;</span><span><strong>Feed Tracking</strong>: can be activated for any object (up to 20 fields per object). Changes appear automatically in the record's feed.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+function show(mod) {
+  document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  var el = document.getElementById('mod-' + mod);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(function(item) {
+    if (item.getAttribute('onclick') === "show('" + mod + "')") {
+      item.classList.add('active');
+    }
+  });
+  window.scrollTo(0, 0);
+  return false;
+}
+</script>
+</body>
+</html>
