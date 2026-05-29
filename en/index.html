@@ -943,7 +943,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
             <div style="background:#F3F2F2;padding:5px 8px;border-radius:var(--r)">Email</div>
           </div>
         </div>
-                  <div class="g2" style="gap:6px">
+        <div style="border:2px dashed var(--sf-orange);border-radius:var(--r);padding:8px">
+          <div style="font-weight:600;color:var(--sf-orange);margin-bottom:6px">&#9607; Section: CRM Genie Trips</div>
+          <div class="g2" style="gap:6px">
             <div style="background:#F3F2F2;padding:5px 8px;border-radius:var(--r)">Cross Selling (R/O)</div>
             <div style="background:#F3F2F2;padding:5px 8px;border-radius:var(--r)">Total Opps (Roll-Up)</div>
           </div>
@@ -1060,6 +1062,52 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       </div>
     </div>
   </div>
+
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">&#128272; Permission Sets &mdash; Genie Trips</span><button class="btn btn-p" style="font-size:12px">+ New Permission Set</button></div>
+    <div class="card-body-pad0">
+      <table class="tbl">
+        <thead><tr><th>Permission Set</th><th>License</th><th>Assigned to</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bdg bdg-new">Lead Convert Access</span></td><td>Salesforce</td><td>Coordinator</td><td>Allows converting Leads to Account/Contact/Opp</td></tr>
+          <tr><td><span class="bdg bdg-warn">Product Manager</span></td><td>Salesforce</td><td>Sales Agent 1, Sales Agent 2</td><td>Edit Products and Price Books</td></tr>
+          <tr><td><span class="bdg bdg-purple">CPQ User</span></td><td>CPQ</td><td>Sales Agent 1</td><td>Full access to Salesforce CPQ</td></tr>
+          <tr><td><span class="bdg bdg-ok">Case Escalation</span></td><td>Salesforce</td><td>Service Agent B</td><td>Manually escalate cases to supervisors</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128101; Permission Set Groups</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span><strong>Permission Set Groups</strong> bundle multiple Permission Sets. A <strong>Muting Permission Set</strong> can be added to restrict specific permissions within the group.</span></div>
+        <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;font-size:12px">
+          <div style="background:var(--sf-dark);color:#fff;padding:8px 12px;font-weight:600">&#128101; Group: Full Sales Agent</div>
+          <div style="padding:8px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px"><span class="bdg bdg-new">Lead Convert Access</span> <span style="color:var(--text3)">Convert qualified leads</span></div>
+          <div style="padding:8px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px"><span class="bdg bdg-warn">Product Manager</span> <span style="color:var(--text3)">Edit catalog and prices</span></div>
+          <div style="padding:8px 12px;display:flex;align-items:center;gap:8px"><span class="bdg bdg-err">&#128683; Muting: Delete Cases</span> <span style="color:var(--text3)">Removes delete permission</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128274; Object-level Permissions (CRUD)</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>Each profile/perm set controls <strong>C</strong>reate, <strong>R</strong>ead, <strong>E</strong>dit, <strong>D</strong>elete, <strong>View All</strong>, <strong>Modify All</strong> per object.</span></div>
+        <table class="tbl" style="font-size:11px">
+          <thead><tr><th>Object</th><th>C</th><th>R</th><th>E</th><th>D</th><th>ViewAll</th><th>ModAll</th></tr></thead>
+          <tbody>
+            <tr><td>Lead</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Opportunity</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Case</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Product2</td><td class="no">&#10007;</td><td class="yes">&#10003;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px;font-size:11px;color:var(--text3)">Profile: <strong>Sales Agent (Custom)</strong> &mdash; Genie Trips</div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section id="mod-security" class="module">
@@ -1104,6 +1152,48 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           <div style="display:flex;justify-content:space-between;padding:8px 0"><span style="font-weight:500">Case</span><span class="bdg bdg-err">Private</span></div>
         </div>
         <div class="hl" style="margin-top:12px">The <strong>Role Hierarchy</strong> automatically gives upward visibility: the Coordinator sees accounts of all subordinates.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">&#128272; Sharing Rules &mdash; Genie Trips</span><button class="btn btn-p" style="font-size:12px">+ New Sharing Rule</button></div>
+    <div class="card-body">
+      <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span><strong>Sharing Rules</strong> are automatic exceptions to OWD. Can be <strong>criteria-based</strong> (field value) or <strong>owner-based</strong> (role/group). They can only open access, never restrict it further.</span></div>
+      <table class="tbl">
+        <thead><tr><th>Rule</th><th>Object</th><th>Type</th><th>Share From</th><th>Share To</th><th>Access</th></tr></thead>
+        <tbody>
+          <tr><td>Europe Opps &rarr; Coordinator</td><td>Opportunity</td><td><span class="bdg bdg-new">Criteria-based</span></td><td>Destination__c = "Europe"</td><td>Role: Coordinator</td><td><span class="bdg bdg-ok">Read/Write</span></td></tr>
+          <tr><td>High Priority Cases</td><td>Case</td><td><span class="bdg bdg-new">Criteria-based</span></td><td>Priority = High</td><td>Role: Agency Manager</td><td><span class="bdg bdg-ok">Read/Write</span></td></tr>
+          <tr><td>Packages Sales Agents</td><td>Account</td><td><span class="bdg bdg-warn">Owner-based</span></td><td>Role: Sales Agent Packages</td><td>Role: Sales Agent Hotels</td><td><span class="bdg bdg-gray">Read Only</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128072; Manual Sharing &amp; Teams</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span><strong>Manual Sharing</strong>: the record owner or an admin shares a specific record with a user/group. <strong>Opportunity Teams</strong> and <strong>Account Teams</strong> allow controlled collaboration without full sharing.</span></div>
+        <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;font-size:12px">
+          <div style="background:#FAFAF9;padding:8px 12px;font-weight:600;border-bottom:1px solid var(--border)">Sharing: Account &mdash; Corp Viajera SA</div>
+          <div style="padding:8px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between"><span>Sales Agent 2</span><span class="bdg bdg-gray">Read Only</span></div>
+          <div style="padding:8px 12px;display:flex;justify-content:space-between"><span>Finance Group</span><span class="bdg bdg-ok">Read/Write</span></div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text3)">Path: Record &rarr; Sharing button &rarr; New &rarr; Select user/group &rarr; Select access level</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128274; Salesforce Security Layers</span></div>
+      <div class="card-body">
+        <div style="font-size:12px">
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--sf-red-bg);border-radius:var(--r);margin-bottom:6px;border-left:3px solid var(--sf-red)"><strong style="min-width:110px">1. OWD</strong><span style="color:var(--text3)">Most restrictive baseline for all records</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--sf-orange-bg);border-radius:var(--r);margin-bottom:6px;border-left:3px solid var(--sf-orange)"><strong style="min-width:110px">2. Role Hierarchy</strong><span style="color:var(--text3)">Superiors see subordinate records</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#FFF9E6;border-radius:var(--r);margin-bottom:6px;border-left:3px solid #F4C430"><strong style="min-width:110px">3. Sharing Rules</strong><span style="color:var(--text3)">Automatic exceptions by criteria/owner</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--sf-green-bg);border-radius:var(--r);border-left:3px solid var(--sf-green)"><strong style="min-width:110px">4. Manual Sharing</strong><span style="color:var(--text3)">One-time sharing per record</span></div>
+        </div>
+        <div class="note" style="margin-top:10px"><span class="note-ico">&#9888;</span><span>Each layer can only <strong>open</strong> access. To <em>restrict</em>, you must tighten the OWD. <strong>View All / Modify All</strong> on the profile bypasses all sharing rules.</span></div>
       </div>
     </div>
   </div>
@@ -1183,6 +1273,60 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       </div>
     </div>
   </div>
+
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">&#128683; Duplicate Management &mdash; Matching &amp; Duplicate Rules</span></div>
+    <div class="card-body">
+      <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span><strong>Matching Rules</strong> define how to identify duplicates (by Email, Name, Phone...). <strong>Duplicate Rules</strong> decide the action: <em>Allow</em> (with alert), <em>Block</em>, or <em>Report</em>. Available for Leads, Contacts, Accounts, and custom objects.</span></div>
+      <div class="g2" style="gap:10px">
+        <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;font-size:12px">
+          <div style="background:#FAFAF9;padding:8px 12px;font-weight:600;border-bottom:1px solid var(--border)">&#128269; Matching Rule: Standard Lead Rule</div>
+          <div style="padding:8px 12px;border-bottom:1px solid var(--border)"><span style="color:var(--text3)">Field:</span> <strong>Email</strong> &mdash; Exact match</div>
+          <div style="padding:8px 12px;border-bottom:1px solid var(--border)"><span style="color:var(--text3)">Field:</span> <strong>First + Last Name</strong> &mdash; Fuzzy match</div>
+          <div style="padding:8px 12px"><span style="color:var(--text3)">Field:</span> <strong>Company</strong> &mdash; Fuzzy match</div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;font-size:12px">
+          <div style="background:#FAFAF9;padding:8px 12px;font-weight:600;border-bottom:1px solid var(--border)">&#9888;&#65039; Duplicate Rule: Lead Duplicate</div>
+          <div style="padding:8px 12px;border-bottom:1px solid var(--border)"><span style="color:var(--text3)">Action (on create):</span> <span class="bdg bdg-warn">Allow + Alert</span></div>
+          <div style="padding:8px 12px;border-bottom:1px solid var(--border)"><span style="color:var(--text3)">Action (on edit):</span> <span class="bdg bdg-gray">Report only</span></div>
+          <div style="padding:8px 12px"><span style="color:var(--text3)">Report to:</span> Data Quality Report</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#127981; Sandbox Types</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>Always develop and test in a <strong>Sandbox</strong> before deploying to Production. Use <strong>Change Sets</strong> or tools like Salesforce CLI to deploy metadata between environments.</span></div>
+        <table class="tbl" style="font-size:11px">
+          <thead><tr><th>Type</th><th>Data?</th><th>Storage</th><th>Refresh</th><th>Use case</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bdg bdg-err">Full Copy</span></td><td class="yes">Full</td><td>Same as Prod</td><td>Every 29 days</td><td>Performance / UAT testing</td></tr>
+            <tr><td><span class="bdg bdg-warn">Partial Copy</span></td><td class="yes">Sample</td><td>5 GB</td><td>Every 5 days</td><td>Quality assurance</td></tr>
+            <tr><td><span class="bdg bdg-new">Developer Pro</span></td><td class="no">None</td><td>1 GB</td><td>Every 1 day</td><td>Integration testing</td></tr>
+            <tr><td><span class="bdg bdg-gray">Developer</span></td><td class="no">None</td><td>200 MB</td><td>Every 1 day</td><td>Development / automation</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128257; Mass Tools &amp; Maintenance</span></div>
+      <div class="card-body">
+        <table class="tbl" style="font-size:12px">
+          <thead><tr><th>Tool</th><th>Where</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Mass Transfer</strong></td><td>Setup</td><td>Reassign Leads/Accounts from one user to another</td></tr>
+            <tr><td><strong>Mass Delete</strong></td><td>Setup</td><td>Delete records by filter; sends to Recycle Bin</td></tr>
+            <tr><td><strong>Recycle Bin</strong></td><td>App</td><td>Restores or permanently deletes; holds 15 days</td></tr>
+            <tr><td><strong>Data Export</strong></td><td>Setup</td><td>Full org backup as ZIP of CSV files (weekly/monthly)</td></tr>
+            <tr><td><strong>Storage Usage</strong></td><td>Setup</td><td>Monitors data and file storage consumption</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section id="mod-reports" class="module">
@@ -1238,6 +1382,60 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       </div>
     </div>
   </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128202; Report Types Comparison</span></div>
+      <div class="card-body">
+        <table class="diff-table">
+          <thead><tr><th>Type</th><th>Groups rows?</th><th>Groups cols?</th><th>Subtotals?</th><th>Best for</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bdg bdg-gray">Tabular</span></td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td>Simple lists, exports</td></tr>
+            <tr><td><span class="bdg bdg-new">Summary</span></td><td class="yes">&#10003;</td><td class="no">&#10007;</td><td class="yes">&#10003;</td><td>Sales by rep, leads by source</td></tr>
+            <tr><td><span class="bdg bdg-warn">Matrix</span></td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td>Revenue by month &amp; product</td></tr>
+            <tr><td><span class="bdg bdg-purple">Joined</span></td><td class="yes">Blocks</td><td class="no">&#10007;</td><td class="yes">Partial</td><td>Compare Opps vs Cases same page</td></tr>
+          </tbody>
+        </table>
+        <div class="note" style="margin-top:10px"><span class="note-ico">&#128161;</span><span>Only <strong>Summary</strong> and <strong>Matrix</strong> reports can be used as <strong>Dashboard components</strong>. Tabular reports can only be used in table components with a row limit.</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128200; Forecast Categories</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span><strong>Forecast Categories</strong> group opportunities for sales prediction. Each Stage maps automatically to a category; admins can customize the mapping.</span></div>
+        <table class="tbl" style="font-size:12px">
+          <thead><tr><th>Category</th><th>Meaning</th><th>Example Stages</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bdg bdg-gray">Omitted</span></td><td>Not counted in forecast</td><td>Closed Lost, Unqualified</td></tr>
+            <tr><td><span class="bdg bdg-new">Pipeline</span></td><td>Possible, not committed</td><td>Qualification, Proposal</td></tr>
+            <tr><td><span class="bdg bdg-warn">Best Case</span></td><td>Could close if things go well</td><td>Negotiation</td></tr>
+            <tr><td><span class="bdg bdg-purple">Commit</span></td><td>Rep commits to close</td><td>Verbal Agreement</td></tr>
+            <tr><td><span class="bdg bdg-ok">Closed</span></td><td>Already won</td><td>Closed Won</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">&#128203; Summary Report &mdash; Opportunities by Stage &amp; Owner</span></div>
+    <div class="card-body">
+      <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>Summary report grouped by <strong>Stage</strong> (row grouping) and <strong>Owner</strong> (sub-grouping). Formulas can be added to calculate metrics like <strong>Conversion Rate</strong>. <strong>Conditional Highlighting</strong> colors cells based on thresholds.</span></div>
+      <table class="tbl" style="font-size:12px">
+        <thead><tr><th>Stage</th><th>Owner</th><th>Count</th><th>Amount</th><th>Avg Close</th></tr></thead>
+        <tbody>
+          <tr style="background:#F3F9FF"><td colspan="5" style="font-weight:700;color:var(--sf-blue)">&#9660; Proposal (subtotal: USD 34,000)</td></tr>
+          <tr><td></td><td>Sales Agent 1</td><td>2</td><td>USD 15,000</td><td>Sep 2026</td></tr>
+          <tr><td></td><td>Sales Agent 2</td><td>3</td><td>USD 19,000</td><td>Oct 2026</td></tr>
+          <tr style="background:#F3F9FF"><td colspan="5" style="font-weight:700;color:var(--sf-blue)">&#9660; Negotiation (subtotal: USD 33,600)</td></tr>
+          <tr><td></td><td>Sales Agent 1</td><td>1</td><td>USD 33,600</td><td>Jan 2027</td></tr>
+          <tr style="background:#F0FFF0"><td colspan="5" style="font-weight:700;color:var(--sf-green)">&#9660; Closed Won (subtotal: USD 48,200)</td></tr>
+          <tr><td></td><td>Sales Agent 1</td><td>4</td><td>USD 27,200</td><td>&mdash;</td></tr>
+          <tr><td></td><td>Sales Agent 2</td><td>3</td><td>USD 21,000</td><td>&mdash;</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </section>
 
 <section id="mod-activities" class="module">
@@ -1272,6 +1470,42 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           <button class="btn btn-n">Cancel</button>
           <button class="btn btn-p">Save</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128197; New Event &mdash; Salesforce Calendar</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span><strong>Events</strong> have a start and end time. You can invite <strong>invitees</strong> (other Salesforce users or contacts). Recurring events repeat on a schedule. Events appear in Salesforce Calendar and sync with Outlook/Gmail if integration is enabled.</span></div>
+        <div class="sf-form">
+          <div class="sf-f" style="grid-column:1/-1"><label>Subject <span class="req">*</span></label><input type="text" value="Europe Package Presentation"></div>
+          <div class="sf-f"><label>Start Date/Time</label><input type="datetime-local" value="2026-06-10T10:00"></div>
+          <div class="sf-f"><label>End Date/Time</label><input type="datetime-local" value="2026-06-10T11:00"></div>
+          <div class="sf-f"><label>Location</label><input type="text" value="Zoom / Virtual"></div>
+          <div class="sf-f"><label>Related To</label><input type="text" value="Opportunity: Europe Package Q3"></div>
+          <div class="sf-f"><label>Name (Contact)</label><input type="text" value="Juan Rodríguez"></div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text3)">&#128279; Invitees: Sales Agent 1, Coordinator &mdash; will appear in their calendars</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#9432; Tasks vs. Events</span></div>
+      <div class="card-body">
+        <table class="diff-table">
+          <thead><tr><th>Feature</th><th>Task</th><th>Event</th></tr></thead>
+          <tbody>
+            <tr><td>Has time duration</td><td class="no">&#10007;</td><td class="yes">&#10003;</td></tr>
+            <tr><td>Due date</td><td class="yes">&#10003; (optional)</td><td class="yes">&#10003; (required)</td></tr>
+            <tr><td>Appears on calendar</td><td class="no">&#10007;</td><td class="yes">&#10003;</td></tr>
+            <tr><td>Can be recurring</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+            <tr><td>Has status</td><td class="yes">Not Started / In Progress / Completed</td><td class="no">&#10007;</td></tr>
+            <tr><td>Group assignment</td><td class="yes">&#10003; (one copy per user)</td><td class="no">Invitees</td></tr>
+            <tr><td>Shared Activities (50 contacts)</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+          </tbody>
+        </table>
+        <div class="hl" style="margin-top:10px"><strong>Email to Salesforce</strong>: a BCC address that automatically logs emails as Activities on the related record. Enabled per user under My Settings.</div>
       </div>
     </div>
   </div>
@@ -1318,6 +1552,38 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           </tbody>
         </table>
         <div class="note" style="margin-top:10px"><span class="note-ico">&#128161;</span><span><strong>Feed Tracking</strong>: can be activated for any object (up to 20 fields per object). Changes appear automatically in the record's feed.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128279; Feed Tracking Configuration</span></div>
+      <div class="card-body">
+        <div class="note" style="margin-bottom:10px"><span class="note-ico">&#128161;</span><span>Setup &rarr; Feed Tracking. Enable per object. Select up to <strong>20 fields</strong> per object. When a tracked field changes, a post automatically appears in the record's Chatter feed.</span></div>
+        <table class="tbl" style="font-size:12px">
+          <thead><tr><th>Object</th><th>Tracking</th><th>Tracked Fields</th></tr></thead>
+          <tbody>
+            <tr><td>Opportunity</td><td><span class="bdg bdg-ok">Enabled</span></td><td>Stage, Amount, Close Date, Owner</td></tr>
+            <tr><td>Case</td><td><span class="bdg bdg-ok">Enabled</span></td><td>Status, Priority, Owner, Escalated</td></tr>
+            <tr><td>Lead</td><td><span class="bdg bdg-ok">Enabled</span></td><td>Status, Rating, Owner</td></tr>
+            <tr><td>Account</td><td><span class="bdg bdg-gray">Disabled</span></td><td>&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">&#128220; Chatter Licenses &amp; Notifications</span></div>
+      <div class="card-body">
+        <table class="tbl" style="font-size:12px;margin-bottom:10px">
+          <thead><tr><th>License</th><th>Can post?</th><th>Sees records?</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bdg bdg-new">Salesforce</span></td><td class="yes">&#10003;</td><td class="yes">&#10003; Full</td><td>Full license</td></tr>
+            <tr><td><span class="bdg bdg-ok">Chatter Free</span></td><td class="yes">&#10003; Groups only</td><td class="no">&#10007;</td><td>Free</td></tr>
+            <tr><td><span class="bdg bdg-gray">Chatter External</span></td><td class="yes">&#10003; Limited</td><td class="no">Invited only</td><td>Free</td></tr>
+          </tbody>
+        </table>
+        <div class="hl"><strong>@Mentions</strong> send email notifications to the mentioned user. <strong>Topics</strong> (#hashtags) group posts across the org and are searchable. <strong>Bookmarks</strong> let users save posts for later reference.</div>
       </div>
     </div>
   </div>
